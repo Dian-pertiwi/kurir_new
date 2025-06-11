@@ -1,0 +1,52 @@
+/* style.css */
+
+/* Pastikan section-title tetap teks center untuk judul dan paragraf */
+.container.section-title > h2,
+.container.section-title > p,
+.container.section-title .title-shape {
+  text-align: center;
+  color: #333;
+}
+
+/* Form dan semua elemen di dalamnya rata kiri */
+.container.section-title form,
+.container.section-title form label,
+.container.section-title form input,
+.container.section-title form select,
+.container.section-title form textarea,
+.container.section-title form button {
+  text-align: left;
+  color: #333;
+  border: 1.5px solid #333;
+}
+
+/* Styling button supaya tetap keren */
+.container.section-title form button {
+  background-color: #ff6600;
+  color: white;
+  font-weight: 600;
+  width: 100%;
+  border: none;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.container.section-title form button:hover {
+  background-color: #e65c00;
+}
+
+/* Style hr garis oranye */
+.container.section-title hr {
+  border-top: 2px solid #ff6600;
+  margin: 1.5rem 0;
+}
+
+.hero-image img {
+  transform: scale(1.7); /* Sesuaikan ukuran, misalnya 1.2 atau 1.5 */
+  transition: transform 0.3s ease;
+}
+
+.retina-logo {
+  width: 200px; /* Ukuran tampilan normal */
+  height: auto;
+}
