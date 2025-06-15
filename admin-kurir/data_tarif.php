@@ -17,6 +17,7 @@ include 'config/koneksi.php';
             <div id="content">
                 <?php include 'navbar.php'; ?>
 
+
                 <!-- data_wilayah.php -->
                 <div class="container-fluid">
                     <h1 class="h3 mb-4 text-gray-800">Wilayah Pengiriman</h1>
@@ -24,6 +25,14 @@ include 'config/koneksi.php';
                     <div class="card shadow mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">Data Wilayah & Tarif Ongkir</h6>
+
+                            <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'berhasil_tambah') : ?>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert"
+                                id="alert-success">
+                                Data tarif ongkir berhasil ditambahkan!
+                            </div>
+                            <?php endif; ?>
+
                             <button class="btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#modalTambahWilayah">
                                 <i class="fas fa-plus"></i> Tambah Wilayah
@@ -43,18 +52,18 @@ include 'config/koneksi.php';
                                 <tbody>
                                     <?php
                                     // Query untuk mengambil data dari tabel tarif_ongkir
-                                    $query = "SELECT 
+                                   $query = "SELECT 
     t.id_tarif,
     kab_asal.nama_kabupaten AS kabupaten_asal,
     kab_tujuan.nama_kabupaten AS kabupaten_tujuan,
     t.tarif
 FROM 
-    tbl_tarif_ongkir t
+    tbl_tarif t
 JOIN 
-    tbl_kabupaten kab_asal ON t.id_kabupaten_asal = kab_asal.id_kabupaten
+    tbl_kabupaten kab_asal ON t.id_kab_asal = kab_asal.id_kab
 JOIN 
-    tbl_kabupaten kab_tujuan ON t.id_kabupaten_tujuan = kab_tujuan.id_kabupaten;
-";
+    tbl_kabupaten kab_tujuan ON t.id_kab_tujuan = kab_tujuan.id_kab";
+
                                     $result = mysqli_query($conn, $query);
                                     
                                     // Menampilkan data
@@ -119,26 +128,26 @@ JOIN
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Kabupaten Asal</label>
-                        <select name="id_kabupaten_asal" class="form-control" required>
+                        <select name="id_kab_asal" class="form-control" required>
                             <option value="">-- Pilih Kabupaten Asal --</option>
                             <?php
                             $kabupaten_list = mysqli_query($conn, "SELECT * FROM tbl_kabupaten ORDER BY nama_kabupaten");
                             while ($kab = mysqli_fetch_assoc($kabupaten_list)) {
-                                echo "<option value='{$kab['id_kabupaten']}'>{$kab['nama_kabupaten']}</option>";
+                                echo "<option value='{$kab['id_kab']}'>{$kab['nama_kabupaten']}</option>";
                             }
                             ?>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Kabupaten Tujuan</label>
-                        <select name="id_kabupaten_tujuan" class="form-control" required>
+                        <select name="id_kab_tujuan" class="form-control" required>
                             <option value="">-- Pilih Kabupaten Tujuan --</option>
                             <?php
                             // Reset pointer supaya query bisa dipakai lagi
                             mysqli_data_seek($kabupaten_list, 0);
                             $kabupaten_list2 = mysqli_query($conn, "SELECT * FROM tbl_kabupaten ORDER BY nama_kabupaten");
                             while ($kab = mysqli_fetch_assoc($kabupaten_list2)) {
-                                echo "<option value='{$kab['id_kabupaten']}'>{$kab['nama_kabupaten']}</option>";
+                                echo "<option value='{$kab['id_kab']}'>{$kab['nama_kabupaten']}</option>";
                             }
                             ?>
                         </select>
@@ -158,3 +167,16 @@ JOIN
 </div>
 
 </html>
+
+
+<script>
+// Hilangkan alert otomatis setelah 3 detik
+setTimeout(function() {
+    var alert = document.getElementById('alert-success');
+    if (alert) {
+        alert.classList.remove('show');
+        alert.classList.add('fade');
+        setTimeout(() => alert.remove(), 300); // hapus dari DOM setelah animasi selesai
+    }
+}, 3000);
+</script>

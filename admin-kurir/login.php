@@ -4,18 +4,20 @@ include 'config/koneksi.php';
 
 if (isset($_POST['login'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = md5($_POST['password']); // karena kamu pakai MD5
+    $password = md5($_POST['password']); // Tetap gunakan MD5 sesuai struktur database
 
-    $query = mysqli_query($conn, "SELECT * FROM tbl_users WHERE username = '$username' AND password = '$password'");
+    $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE username = '$username' AND password = '$password'");
     $data = mysqli_fetch_assoc($query);
 
     if ($data) {
-        $_SESSION['username'] = $data['username'];
-        $_SESSION['level']    = $data['role'];
+        $_SESSION['id_user']   = $data['id_user'];
+        $_SESSION['username']  = $data['username'];
+        $_SESSION['nama_user'] = $data['nama_user'];
+        $_SESSION['level']     = $data['role'];
 
-        // Jika remember me dicentang
+        // Jika "Remember Me" dicentang
         if (isset($_POST['remember'])) {
-            setcookie('username', $username, time() + (86400 * 30), "/");
+            setcookie('username', $username, time() + (86400 * 30), "/"); // 30 hari
         }
 
         header("Location: dashboard.php");
@@ -25,6 +27,7 @@ if (isset($_POST['login'])) {
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>

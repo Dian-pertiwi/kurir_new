@@ -35,40 +35,35 @@ include 'config/koneksi.php';
                                     </thead>
                                     <tbody>
                                         <?php
-                                        // Query untuk mengambil data dari beberapa tabel yang sudah dinormalisasi
                                         $sql = "
                                             SELECT 
-                                                p.id_pengiriman,
-                                                p.id_pengirim,
-                                                p.id_penerima,
-                                                p.kurir_jemput,
-                                                p.kurir_antar,
-                                                pg.nama_pengirim,
-                                                pn.nama_penerima
-                                            FROM tbl_pengiriman p
-                                            LEFT JOIN tbl_pengirim pg ON p.id_pengirim = pg.id_pengirim
-                                            LEFT JOIN tbl_penerima pn ON p.id_penerima = pn.id_penerima
-                                            ORDER BY p.id_pengiriman DESC
+                                                pp.id_pengiriman,
+                                                pp.nama_pengirim,
+                                                pp.nama_penerima,
+                                                kj.nama_kurir AS kurir_jemput,
+                                                ka.nama_kurir AS kurir_antar
+                                            FROM tbl_pengiriman_paket pp
+                                            LEFT JOIN tbl_data_kurir kj ON pp.id_kurir_jemput = kj.id_kurir
+                                            LEFT JOIN tbl_data_kurir ka ON pp.id_kurir_antar = ka.id_kurir
+                                            ORDER BY pp.id_pengiriman DESC
                                         ";
                                         $query = $conn->query($sql);
 
                                         while ($row = $query->fetch_assoc()):
-                                        $id = $row['id_pengiriman'];
-                                        $kode = 'ORD' . str_pad($id, 3, '0', STR_PAD_LEFT);
+                                            $id = $row['id_pengiriman'];
+                                            $kode = 'ORD' . str_pad($id, 3, '0', STR_PAD_LEFT);
                                         ?>
                                         <tr>
                                             <td><?= htmlspecialchars($kode) ?></td>
                                             <td><?= htmlspecialchars($row['nama_pengirim']) ?></td>
                                             <td><?= htmlspecialchars($row['nama_penerima']) ?></td>
-                                            <td><?= htmlspecialchars($row['kurir_jemput']) ?></td>
-                                            <td><?= htmlspecialchars($row['kurir_antar']) ?></td>
+                                            <td><?= htmlspecialchars($row['kurir_jemput'] ?? '-') ?></td>
+                                            <td><?= htmlspecialchars($row['kurir_antar'] ?? '-') ?></td>
                                             <td>
-                                                <!-- Tombol Konfirmasi tetap ada -->
                                                 <button class="btn btn-success btn-sm" data-toggle="modal"
                                                     data-target="#modalKonfirmasi<?= $id ?>">
                                                     <i class="fas fa-check"></i> Konfirmasi
                                                 </button>
-                                                <!-- Tombol untuk melihat detail orderan -->
                                                 <a href="detail_order.php?id=<?= $id ?>" class="btn btn-info btn-sm">
                                                     <i class="fas fa-eye"></i> Lihat Detail
                                                 </a>
@@ -85,23 +80,23 @@ include 'config/koneksi.php';
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="modalKonfirmasiLabel<?= $id ?>">
-                                                                Konfirmasi Order #<?= $kode ?></h5>
+                                                                Konfirmasi Order #<?= $kode ?>
+                                                            </h5>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <?php 
-                                                        $kurir_query = mysqli_query($conn, "SELECT * FROM tbl_data_kurir");
+                                                        $kurir_query = mysqli_query($conn, "SELECT * FROM tbl_data_kurir WHERE status = 'aktif'");
                                                         $kurir_options = '';
                                                         while ($kurir = mysqli_fetch_assoc($kurir_query)) {
                                                             $kurir_options .= '<option value="' . $kurir['id_kurir'] . '">' . $kurir['nama_kurir'] . ' (' . $kurir['alamat'] . ')</option>';
                                                         }
                                                         ?>
-
                                                         <div class="modal-body">
                                                             <div class="form-group">
-                                                                <label for="id_kurir_jemput">Kurir Jemput</label>
+                                                                <label>Kurir Jemput</label>
                                                                 <select name="id_kurir_jemput" class="form-control"
                                                                     required>
                                                                     <option value="">-- Pilih Kurir Jemput --</option>
@@ -109,18 +104,12 @@ include 'config/koneksi.php';
                                                                 </select>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="id_kurir_antar">Kurir Antar</label>
+                                                                <label>Kurir Antar</label>
                                                                 <select name="id_kurir_antar" class="form-control"
                                                                     required>
                                                                     <option value="">-- Pilih Kurir Antar --</option>
                                                                     <?= $kurir_options ?>
                                                                 </select>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="tarif_ongkir">Tarif Ongkir</label>
-                                                                <input type="number" name="tarif_ongkir"
-                                                                    class="form-control" required
-                                                                    placeholder="Masukkan tarif ongkir">
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -142,17 +131,13 @@ include 'config/koneksi.php';
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
             </div>
-            <!-- End of Main Content -->
 
             <?php include 'footer.php'; ?>
         </div>
-        <!-- End of Content Wrapper -->
     </div>
-    <!-- End of Page Wrapper -->
 
-    <!-- JavaScript -->
+    <!-- JS -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>

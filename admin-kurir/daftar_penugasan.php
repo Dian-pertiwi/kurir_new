@@ -1,15 +1,16 @@
+<?php
+include 'config/koneksi.php';
+?>
+
 <!DOCTYPE html>
 <html lang="id">
-
 <?php include 'head.php'; ?>
 
 <body id="page-top">
     <div id="wrapper">
-
         <?php include 'sidebar.php'; ?>
 
         <div id="content-wrapper" class="d-flex flex-column">
-
             <div id="content">
                 <?php include 'navbar.php'; ?>
 
@@ -36,34 +37,32 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                                        // Include connection to the database
-                                        include 'config/koneksi.php';
+                                    $sql = "
+                                        SELECT 
+                                            p.id_pengiriman, 
+                                            k1.nama_kurir AS kurir_jemput, 
+                                            k2.nama_kurir AS kurir_antar,
+                                            p.resi,
+                                            s.nama_status,
+                                            p.waktu_konfirmasi
+                                        FROM tbl_pengiriman_paket p
+                                        LEFT JOIN tbl_data_kurir k1 ON p.id_kurir_jemput = k1.id_kurir
+                                        LEFT JOIN tbl_data_kurir k2 ON p.id_kurir_antar = k2.id_kurir
+                                        LEFT JOIN tbl_status_order s ON p.id_status_order = s.id_status
+                                        ORDER BY p.id_pengiriman DESC
+                                    ";
 
-                                        // Query untuk mengambil data yang sudah dinormalisasi dengan JOIN
-                                        $sql = "
-                                            SELECT 
-                                                o.id_pengiriman, 
-                                                k1.nama_kurir AS kurir_jemput, 
-                                                k2.nama_kurir AS kurir_antar, 
-                                                o.resi, 
-                                                o.status_order, 
-                                                o.waktu_konfirmasi
-                                            FROM tbl_pengiriman o
-                                            LEFT JOIN tbl_data_kurir k1 ON o.kurir_jemput = k1.id_kurir
-                                            LEFT JOIN tbl_data_kurir k2 ON o.kurir_antar = k2.id_kurir
-                                            ORDER BY o.id_pengiriman DESC";
-                                        
-                                        $query = $conn->query($sql);
-
-                                        // Loop melalui hasil query dan menampilkan data
-                                        while ($row = $query->fetch_assoc()):
-                                            $id_order = $row['id_pengiriman'];
-                                            $kurir_jemput = $row['kurir_jemput'];
-                                            $kurir_antar = $row['kurir_antar'];
-                                            $resi = $row['resi'];
-                                            $status = ucfirst($row['status_order']); // Membuat status lebih mudah dibaca
-                                            $waktu_konfirmasi = $row['waktu_konfirmasi'] ? date('d M Y, H:i', strtotime($row['waktu_konfirmasi'])) : '-';
-                                        ?>
+                                    $query = $conn->query($sql);
+                                    while ($row = $query->fetch_assoc()):
+                                        $id_order = $row['id_pengiriman'];
+                                        $kurir_jemput = $row['kurir_jemput'] ?? '-';
+                                        $kurir_antar = $row['kurir_antar'] ?? '-';
+                                        $resi = $row['resi'] ?? '-';
+                                        $status = $row['nama_status'] ?? '-';
+                                        $waktu_konfirmasi = $row['waktu_konfirmasi'] 
+                                            ? date('d M Y, H:i', strtotime($row['waktu_konfirmasi']))
+                                            : '-';
+                                    ?>
                                         <tr>
                                             <form action="update_status.php" method="POST">
                                                 <td>
@@ -73,26 +72,18 @@
                                                 <td><?= htmlspecialchars($kurir_jemput) ?></td>
                                                 <td><?= htmlspecialchars($kurir_antar) ?></td>
                                                 <td><?= htmlspecialchars($resi) ?></td>
-                                                <td>
-                                                    <!-- Menampilkan status langsung tanpa dropdown -->
-                                                    <?= htmlspecialchars($status) ?>
-                                                </td>
+                                                <td><?= htmlspecialchars($status) ?></td>
                                                 <td><?= $waktu_konfirmasi ?></td>
                                                 <td class="d-flex justify-content-between">
                                                     <a href="detail_order.php?id=<?= $id_order ?>"
                                                         class="btn btn-info btn-sm mr-1">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="edit_status.php?id=<?= $id_order ?>"
-                                                        class="btn btn-warning btn-sm">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </a>
                                                     <a href="hapus_order.php?id=<?= $id_order ?>"
                                                         class="btn btn-danger btn-sm">
                                                         <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
-
                                             </form>
                                         </tr>
                                         <?php endwhile; ?>
@@ -107,9 +98,9 @@
 
             <?php include 'footer.php'; ?>
         </div>
-
     </div>
 
+    <!-- Scripts -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
