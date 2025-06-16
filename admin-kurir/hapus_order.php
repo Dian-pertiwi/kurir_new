@@ -7,13 +7,12 @@ if (isset($_GET['id'])) {
     // Ambil id dari URL
     $id_order = $_GET['id'];
 
-    // Query untuk menghapus data berdasarkan id_order_masuk
-    $sql = "DELETE FROM tbl_order_masuk WHERE id_order_masuk = ?";
+    $sql = "DELETE FROM tbl_pengiriman_paket WHERE id_pengiriman = ?";
     
     // Siapkan statement
     if ($stmt = $conn->prepare($sql)) {
         // Bind parameter (i = integer)
-        $stmt->bind_param("i", $id_order);
+        $stmt->bind_param("i", $id_pengiriman);
 
         // Eksekusi query
         if ($stmt->execute()) {

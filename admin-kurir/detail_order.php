@@ -1,5 +1,16 @@
 <?php
+session_start();
 include 'config/koneksi.php';
+
+// Cek apakah sudah login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Query data kurir
+$query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
+
 $id_order = $_GET['id'] ?? 0;
 
 // Ambil data utama pengiriman + relasi

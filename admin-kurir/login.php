@@ -10,18 +10,27 @@ if (isset($_POST['login'])) {
     $data = mysqli_fetch_assoc($query);
 
     if ($data) {
-        $_SESSION['id_user']   = $data['id_user'];
-        $_SESSION['username']  = $data['username'];
-        $_SESSION['nama_user'] = $data['nama_user'];
-        $_SESSION['level']     = $data['role'];
+    $_SESSION['id_user']   = $data['id_user'];
+    $_SESSION['username']  = $data['username'];
+    $_SESSION['nama_user'] = $data['nama_user'];
+    $_SESSION['role']     = $data['role'];
 
-        // Jika "Remember Me" dicentang
-        if (isset($_POST['remember'])) {
-            setcookie('username', $username, time() + (86400 * 30), "/"); // 30 hari
-        }
+    if (isset($_POST['remember'])) {
+        setcookie('username', $username, time() + (86400 * 30), "/");
+    }
 
+    // Arahkan sesuai role
+    if ($data['role'] === 'admin') {
         header("Location: dashboard.php");
-        exit;
+    } elseif ($data['role'] === 'kurir') {
+        header("Location: dashboard.php");
+    } else {
+        $error = "Role tidak dikenali.";
+        header("Location: login.php");
+    }
+
+    exit; // penting: hentikan eksekusi setelah redirec
+
     } else {
         $error = "Username atau password salah!";
     }

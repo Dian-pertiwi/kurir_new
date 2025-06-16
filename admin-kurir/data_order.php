@@ -1,7 +1,16 @@
 <?php
+session_start();
 include 'config/koneksi.php';
-?>
 
+// Cek apakah sudah login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Query data kurir
+$query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
+?>
 <!DOCTYPE html>
 <html lang="id">
 <?php include 'head.php'; ?>
@@ -60,16 +69,19 @@ include 'config/koneksi.php';
                                             <td><?= htmlspecialchars($row['kurir_jemput'] ?? '-') ?></td>
                                             <td><?= htmlspecialchars($row['kurir_antar'] ?? '-') ?></td>
                                             <td>
+                                                <?php if ($_SESSION['level'] !== 'kurir'): ?>
                                                 <button class="btn btn-success btn-sm" data-toggle="modal"
                                                     data-target="#modalKonfirmasi<?= $id ?>">
                                                     <i class="fas fa-check"></i> Konfirmasi
                                                 </button>
+                                                <?php endif; ?>
                                                 <a href="detail_order.php?id=<?= $id ?>" class="btn btn-info btn-sm">
                                                     <i class="fas fa-eye"></i> Lihat Detail
                                                 </a>
                                             </td>
                                         </tr>
 
+                                        <?php if ($_SESSION['level'] === 'admin'): ?>
                                         <!-- Modal Konfirmasi -->
                                         <div class="modal fade" id="modalKonfirmasi<?= $id ?>" tabindex="-1"
                                             role="dialog" aria-labelledby="modalKonfirmasiLabel<?= $id ?>"
@@ -122,6 +134,7 @@ include 'config/koneksi.php';
                                                 </form>
                                             </div>
                                         </div>
+                                        <?php endif; ?>
 
                                         <?php endwhile; ?>
                                     </tbody>

@@ -1,5 +1,15 @@
 <?php
+session_start();
 include 'config/koneksi.php';
+
+// Cek apakah sudah login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Query data kurir
+$query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
 ?>
 
 
@@ -38,11 +48,14 @@ include 'config/koneksi.php';
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">Data Kurir</h6>
+
+                            <?php if ($_SESSION['level'] === 'admin'): ?>
                             <!-- Tombol trigger modal -->
                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#modalTambahKurir">
                                 <i class="fas fa-plus"></i> Tambah Kurir
                             </button>
+                            <?php endif; ?>
 
                         </div>
                         <div class="card-body">
@@ -54,7 +67,9 @@ include 'config/koneksi.php';
                                             <th>No. HP</th>
                                             <th>Alamat</th>
                                             <th>Status</th>
+                                            <?php if ($_SESSION['level'] === 'admin'): ?>
                                             <th>Aksi</th>
+                                            <?php endif; ?>
                                         </tr>
                                     </thead>
 
@@ -79,17 +94,16 @@ while ($row = mysqli_fetch_assoc($result)) {
                                             <td><span class="badge badge-success">
                                                     <?php echo $row['status']; ?>
                                                 </span></td>
+                                            <?php if ($_SESSION['level'] === 'admin'): ?>
                                             <td>
-                                                <a href="edit_kurir.php?id=<?php echo $row['id_kurir']; ?>"
-                                                    class="btn btn-warning btn-sm">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                <a href="hapus_kurir.php?id=<?php echo $row['id_kurir']; ?>"
-                                                    onclick="return confirm('Yakin ingin menghapus kurir ini?')"
-                                                    class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash"></i> Hapus
-                                                </a>
+                                                <a href="edit_kurir.php?id=<?= $row['id_kurir']; ?>"
+                                                    class="btn btn-sm btn-warning">Edit</a>
+                                                <a href="hapus_kurir.php?id=<?= $row['id_kurir']; ?>"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
+
                                             </td>
+                                            <?php endif; ?>
                                         </tr>
                                         <?php
 }
@@ -122,6 +136,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     </script>
 </body>
 
+
+<?php if ($_SESSION['level'] === 'admin'): ?>
 <!-- Modal Tambah Kurir -->
 <div class="modal fade" id="modalTambahKurir" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
     aria-hidden="true">
@@ -164,6 +180,6 @@ while ($row = mysqli_fetch_assoc($result)) {
         </form>
     </div>
 </div>
-
+<?php endif; ?>
 
 </html>

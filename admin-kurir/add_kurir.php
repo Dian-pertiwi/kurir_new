@@ -1,6 +1,12 @@
 <?php
 include 'config/koneksi.php';
 
+session_start();
+if ($_SESSION['level'] === 'kurir') {
+    echo "Akses ditolak!";
+    exit;
+}
+
 if (isset($_POST['tambahKurir'])) {
     $nama_kurir = $_POST['nama_kurir'];
     $no_hp = $_POST['no_hp'];

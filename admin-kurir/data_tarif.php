@@ -1,6 +1,8 @@
-<?php 
-include 'config/koneksi.php';
+<?php
+include 'init.php';
+$queryKurir = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
 ?>
+
 
 <!DOCTYPE html>
 <html lang="id">
@@ -20,7 +22,7 @@ include 'config/koneksi.php';
 
                 <!-- data_wilayah.php -->
                 <div class="container-fluid">
-                    <h1 class="h3 mb-4 text-gray-800">Wilayah Pengiriman</h1>
+                    <h1 class="h3 mb-4 text-gray-800">Wilayah Pengiriman dan Tarif</h1>
 
                     <div class="card shadow mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
@@ -33,20 +35,24 @@ include 'config/koneksi.php';
                             </div>
                             <?php endif; ?>
 
+                            <?php if ($_SESSION['level'] === 'admin'): ?>
                             <button class="btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#modalTambahWilayah">
-                                <i class="fas fa-plus"></i> Tambah Wilayah
+                                <i class="fas fa-plus"></i> Tambah Tarif
                             </button>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered" id="dataTable">
                                 <thead>
                                     <tr>
                                         <th>ID Wilayah</th>
                                         <th>Kabupaten Asal</th>
                                         <th>Kabupaten Tujuan</th>
                                         <th>Tarif Ongkir</th>
+                                        <?php if ($_SESSION['level'] === 'admin'): ?>
                                         <th>Aksi</th>
+                                        <?php endif; ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -74,6 +80,7 @@ JOIN
                                         <td><?php echo $row['kabupaten_asal']; ?></td>
                                         <td><?php echo $row['kabupaten_tujuan']; ?></td>
                                         <td>Rp <?php echo number_format($row['tarif'], 0, ',', '.'); ?></td>
+                                        <?php if ($_SESSION['level'] === 'admin'): ?>
                                         <td>
                                             <a href="edit_tarif.php?id=<?php echo $row['id_tarif']; ?>"
                                                 class="btn btn-outline-primary btn-sm">
@@ -85,6 +92,7 @@ JOIN
                                                 <i class="fas fa-trash-alt"></i> Hapus
                                             </a>
                                         </td>
+                                        <?php endif; ?>
                                     </tr>
                                     <?php
                                     }
@@ -115,6 +123,9 @@ JOIN
     </script>
 </body>
 
+
+
+<?php if ($_SESSION['level'] === 'admin'): ?>
 <!-- Modal Tambah Wilayah -->
 <div class="modal fade" id="modalTambahWilayah" tabindex="-1" role="dialog" aria-labelledby="modalLabelWilayah"
     aria-hidden="true">
@@ -143,8 +154,6 @@ JOIN
                         <select name="id_kab_tujuan" class="form-control" required>
                             <option value="">-- Pilih Kabupaten Tujuan --</option>
                             <?php
-                            // Reset pointer supaya query bisa dipakai lagi
-                            mysqli_data_seek($kabupaten_list, 0);
                             $kabupaten_list2 = mysqli_query($conn, "SELECT * FROM tbl_kabupaten ORDER BY nama_kabupaten");
                             while ($kab = mysqli_fetch_assoc($kabupaten_list2)) {
                                 echo "<option value='{$kab['id_kab']}'>{$kab['nama_kabupaten']}</option>";
@@ -165,6 +174,7 @@ JOIN
         </form>
     </div>
 </div>
+<?php endif; ?>
 
 </html>
 

@@ -1,10 +1,16 @@
 <?php
 include 'config/koneksi.php';
 
+session_start();
+if ($_SESSION['level'] !== 'admin') {
+    echo "Akses ditolak. Halaman ini hanya untuk admin.";
+    exit;
+}
+
 // Cek jika tidak ada ID di URL
 if (!isset($_GET['id'])) {
-    header("Location: data_kurir.php");
-    exit;
+header("Location: data_kurir.php");
+exit;
 }
 
 $id_kurir = $_GET['id'];
@@ -16,30 +22,30 @@ $data = mysqli_fetch_assoc($result);
 
 // Redirect jika data tidak ditemukan
 if (!$data) {
-    header("Location: data_kurir.php?notfound=1");
-    exit;
+header("Location: data_kurir.php?notfound=1");
+exit;
 }
 
 // Proses jika form disubmit
 if (isset($_POST['updateKurir'])) {
-    $nama_kurir = $_POST['nama_kurir'];
-    $no_hp = $_POST['no_hp'];
-    $alamat = $_POST['alamat'];
-    $status = $_POST['status'];
+$nama_kurir = $_POST['nama_kurir'];
+$no_hp = $_POST['no_hp'];
+$alamat = $_POST['alamat'];
+$status = $_POST['status'];
 
-    $update = "UPDATE tbl_data_kurir SET 
-                nama_kurir = '$nama_kurir',
-                no_hp = '$no_hp',
-                alamat = '$alamat',
-                status = '$status'
-               WHERE id_kurir = '$id_kurir'";
+$update = "UPDATE tbl_data_kurir SET
+nama_kurir = '$nama_kurir',
+no_hp = '$no_hp',
+alamat = '$alamat',
+status = '$status'
+WHERE id_kurir = '$id_kurir'";
 
-    if (mysqli_query($conn, $update)) {
-        header("Location: data_kurir.php?update=1");
-        exit;
-    } else {
-        $error = "Gagal memperbarui data.";
-    }
+if (mysqli_query($conn, $update)) {
+header("Location: data_kurir.php?update=1");
+exit;
+} else {
+$error = "Gagal memperbarui data.";
+}
 }
 ?>
 

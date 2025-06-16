@@ -1,5 +1,15 @@
 <?php
+session_start();
 include 'config/koneksi.php';
+
+// Cek apakah sudah login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Query data kurir
+$query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
 ?>
 
 <!DOCTYPE html>
@@ -37,37 +47,38 @@ include 'config/koneksi.php';
                                     </thead>
                                     <tbody>
                                         <?php
-                                    $sql = "
-                                        SELECT 
-                                            p.id_pengiriman, 
-                                            k1.nama_kurir AS kurir_jemput, 
-                                            k2.nama_kurir AS kurir_antar,
-                                            p.resi,
-                                            s.nama_status,
-                                            p.waktu_konfirmasi
-                                        FROM tbl_pengiriman_paket p
-                                        LEFT JOIN tbl_data_kurir k1 ON p.id_kurir_jemput = k1.id_kurir
-                                        LEFT JOIN tbl_data_kurir k2 ON p.id_kurir_antar = k2.id_kurir
-                                        LEFT JOIN tbl_status_order s ON p.id_status_order = s.id_status
-                                        ORDER BY p.id_pengiriman DESC
-                                    ";
+                                        $sql = "
+                                            SELECT 
+                                                p.id_pengiriman, 
+                                                k1.nama_kurir AS kurir_jemput, 
+                                                k2.nama_kurir AS kurir_antar,
+                                                p.resi,
+                                                s.nama_status,
+                                                p.waktu_konfirmasi
+                                            FROM tbl_pengiriman_paket p
+                                            LEFT JOIN tbl_data_kurir k1 ON p.id_kurir_jemput = k1.id_kurir
+                                            LEFT JOIN tbl_data_kurir k2 ON p.id_kurir_antar = k2.id_kurir
+                                            LEFT JOIN tbl_status_order s ON p.id_status_order = s.id_status
+                                            ORDER BY p.id_pengiriman DESC
+                                        ";
 
-                                    $query = $conn->query($sql);
-                                    while ($row = $query->fetch_assoc()):
-                                        $id_order = $row['id_pengiriman'];
-                                        $kurir_jemput = $row['kurir_jemput'] ?? '-';
-                                        $kurir_antar = $row['kurir_antar'] ?? '-';
-                                        $resi = $row['resi'] ?? '-';
-                                        $status = $row['nama_status'] ?? '-';
-                                        $waktu_konfirmasi = $row['waktu_konfirmasi'] 
-                                            ? date('d M Y, H:i', strtotime($row['waktu_konfirmasi']))
-                                            : '-';
-                                    ?>
+                                        $query = $conn->query($sql);
+                                        while ($row = $query->fetch_assoc()):
+                                            $id_pengiriman = $row['id_pengiriman'];
+                                            $kurir_jemput = $row['kurir_jemput'] ?? '-';
+                                            $kurir_antar = $row['kurir_antar'] ?? '-';
+                                            $resi = $row['resi'] ?? '-';
+                                            $status = $row['nama_status'] ?? '-';
+                                            $waktu_konfirmasi = $row['waktu_konfirmasi'] 
+                                                ? date('d M Y, H:i', strtotime($row['waktu_konfirmasi']))
+                                                : '-';
+                                        ?>
                                         <tr>
                                             <form action="update_status.php" method="POST">
                                                 <td>
-                                                    <?= 'PKT' . str_pad($id_order, 3, '0', STR_PAD_LEFT) ?>
-                                                    <input type="hidden" name="id_order" value="<?= $id_order ?>">
+                                                    <?= 'PKT' . str_pad($id_pengiriman, 3, '0', STR_PAD_LEFT) ?>
+                                                    <input type="hidden" name="id_pengiriman"
+                                                        value="<?= $id_pengiriman ?>">
                                                 </td>
                                                 <td><?= htmlspecialchars($kurir_jemput) ?></td>
                                                 <td><?= htmlspecialchars($kurir_antar) ?></td>
@@ -75,14 +86,22 @@ include 'config/koneksi.php';
                                                 <td><?= htmlspecialchars($status) ?></td>
                                                 <td><?= $waktu_konfirmasi ?></td>
                                                 <td class="d-flex justify-content-between">
-                                                    <a href="detail_order.php?id=<?= $id_order ?>"
+                                                    <a href="detail_order.php?id=<?= $id_pengiriman ?>"
                                                         class="btn btn-info btn-sm mr-1">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a href="hapus_order.php?id=<?= $id_order ?>"
+
+                                                    <?php if ($_SESSION['level'] === 'kurir'): ?>
+                                                    <a href="edit_kurir.php?id=<?= $id_pengiriman ?>"
+                                                        class="btn btn-sm btn-warning">Edit</a>
+                                                    <?php else: ?>
+                                                    <a href="edit_kurir.php?id=<?= $id_pengiriman ?>"
+                                                        class="btn btn-sm btn-warning mr-1">Edit</a>
+                                                    <a href="hapus_order.php?id=<?= $id_pengiriman ?>"
                                                         class="btn btn-danger btn-sm">
                                                         <i class="fas fa-trash"></i> Hapus
                                                     </a>
+                                                    <?php endif; ?>
                                                 </td>
                                             </form>
                                         </tr>
