@@ -33,7 +33,7 @@ if (!isset($header_included)) {
                         </p>
                         <div class="cta-buttons" data-aos="fade-up" data-aos-delay="300">
                             <a href="order.php" class="btn btn-primary">Pesan Sekarang</a>
-                            <a href="cek_resi.php" class="btn btn-outline">Lacak Kiriman</a>
+                            <a href="cek_resi.php" class="btn btn-outline">Cek Resi</a>
                         </div>
                         <div class="hero-stats mt-4" data-aos="fade-up" data-aos-delay="400">
                             <div class="stat-item">

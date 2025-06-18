@@ -49,7 +49,7 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">Data Kurir</h6>
 
-                            <?php if ($_SESSION['level'] === 'admin'): ?>
+                            <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
                             <!-- Tombol trigger modal -->
                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#modalTambahKurir">
@@ -67,7 +67,7 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
                                             <th>No. HP</th>
                                             <th>Alamat</th>
                                             <th>Status</th>
-                                            <?php if ($_SESSION['level'] === 'admin'): ?>
+                                            <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
                                             <th>Aksi</th>
                                             <?php endif; ?>
                                         </tr>
@@ -94,7 +94,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                                             <td><span class="badge badge-success">
                                                     <?php echo $row['status']; ?>
                                                 </span></td>
-                                            <?php if ($_SESSION['level'] === 'admin'): ?>
+                                            <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
                                             <td>
                                                 <a href="edit_kurir.php?id=<?= $row['id_kurir']; ?>"
                                                     class="btn btn-sm btn-warning">Edit</a>
@@ -137,7 +137,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 </body>
 
 
-<?php if ($_SESSION['level'] === 'admin'): ?>
+<?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
 <!-- Modal Tambah Kurir -->
 <div class="modal fade" id="modalTambahKurir" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
     aria-hidden="true">

@@ -91,11 +91,11 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
                                                         <i class="fas fa-eye"></i>
                                                     </a>
 
-                                                    <?php if ($_SESSION['level'] === 'kurir'): ?>
+                                                    <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
                                                     <a href="edit_kurir.php?id=<?= $id_pengiriman ?>"
                                                         class="btn btn-sm btn-warning">Edit</a>
                                                     <?php else: ?>
-                                                    <a href="edit_kurir.php?id=<?= $id_pengiriman ?>"
+                                                    <a href="edit_status.php?id=<?= $id_pengiriman ?>"
                                                         class="btn btn-sm btn-warning mr-1">Edit</a>
                                                     <a href="hapus_order.php?id=<?= $id_pengiriman ?>"
                                                         class="btn btn-danger btn-sm">

@@ -2,11 +2,13 @@
 session_start();
 include 'config/koneksi.php';
 
-// Cek apakah sudah login
+// Cek login
 if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit;
 }
+
+
 
 // Query data kurir
 $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
@@ -69,7 +71,7 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
                                             <td><?= htmlspecialchars($row['kurir_jemput'] ?? '-') ?></td>
                                             <td><?= htmlspecialchars($row['kurir_antar'] ?? '-') ?></td>
                                             <td>
-                                                <?php if ($_SESSION['level'] !== 'kurir'): ?>
+                                                <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
                                                 <button class="btn btn-success btn-sm" data-toggle="modal"
                                                     data-target="#modalKonfirmasi<?= $id ?>">
                                                     <i class="fas fa-check"></i> Konfirmasi
@@ -80,8 +82,8 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
                                                 </a>
                                             </td>
                                         </tr>
+                                        <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
 
-                                        <?php if ($_SESSION['level'] === 'admin'): ?>
                                         <!-- Modal Konfirmasi -->
                                         <div class="modal fade" id="modalKonfirmasi<?= $id ?>" tabindex="-1"
                                             role="dialog" aria-labelledby="modalKonfirmasiLabel<?= $id ?>"

@@ -1,32 +1,43 @@
 <?php
-// Include connection to the database
+session_start();
 include 'config/koneksi.php';
 
-// Cek apakah id_order ada di parameter URL
-if (isset($_GET['id'])) {
-    $id_order = $_GET['id'];
+// Cek apakah sudah login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
 
-    // Ambil data order berdasarkan ID
-    $sql = "SELECT * FROM tbl_order_masuk WHERE id_order_masuk = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id_order);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $order = $result->fetch_assoc();
-    
-    // Ambil status yang ada di tabel tbl_status_order untuk pilihan
+// Query data kurir
+$query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
+
+// Ambil data order berdasarkan ID
+$sql = "SELECT * FROM tbl_pengiriman_paket WHERE id_pengiriman = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id_order);
+$stmt->execute();
+$result = $stmt->get_result();
+$order = $result->fetch_assoc();
+
+if (!$order) {
+    echo "<div class='alert alert-danger'>Data order dengan ID $id_order tidak ditemukan.</div>";
+    exit;
+
+
+    // ✅ Ambil status yang benar dari tabel tbl_status_order
     $status_query = "SELECT * FROM tbl_status_order";
     $status_result = $conn->query($status_query);
 
     // Ambil data kurir dari tabel tbl_data_kurir
     $kurir_query = "SELECT * FROM tbl_data_kurir";
     $kurir_result = $conn->query($kurir_query);
-    
+
     // Menyimpan hasil kurir ke dalam array
     $kurir_data = [];
     while ($kurir = $kurir_result->fetch_assoc()) {
         $kurir_data[] = $kurir; // Menyimpan data kurir ke dalam array
     }
+
 }
 
 // Proses update status setelah form disubmit
@@ -38,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resi = $_POST['resi'];
 
     // Update status order
-    $update_sql = "UPDATE tbl_order_masuk SET kurir_jemput = ?, kurir_antar = ?, resi = ?, status_order = ? WHERE id_order_masuk = ?";
+    $update_sql = "UPDATE tbl_pengiriman_paket SET kurir_jemput = ?, kurir_antar = ?, resi = ?, status_order = ? WHERE id_pengiriman = ?";
     $update_stmt = $conn->prepare($update_sql);
     $update_stmt->bind_param("ssssi", $kurir_jemput, $kurir_antar, $resi, $new_status, $id_order);
     $update_stmt->execute();
@@ -73,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="card-body">
                             <form action="edit_status.php?id=<?= $id_order ?>" method="POST">
+                                <?php if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'kurir'): ?>
+                                <!-- ADMIN: Bisa edit semua -->
                                 <div class="form-group">
                                     <label for="kurir_jemput">Kurir Jemput</label>
                                     <select class="form-control" id="kurir_jemput" name="kurir_jemput" required>
@@ -104,7 +117,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <input type="text" class="form-control" id="resi" name="resi"
                                         value="<?= htmlspecialchars($order['resi']) ?>" required>
                                 </div>
+                                <?php else: ?>
+                                <!-- KURIR: Tidak bisa edit kurir/resi -->
+                                <input type="hidden" name="kurir_jemput"
+                                    value="<?= htmlspecialchars($order['kurir_jemput']) ?>">
+                                <input type="hidden" name="kurir_antar"
+                                    value="<?= htmlspecialchars($order['kurir_antar']) ?>">
+                                <input type="hidden" name="resi" value="<?= htmlspecialchars($order['resi']) ?>">
+                                <?php endif; ?>
 
+                                <!-- STATUS bisa diubah oleh keduanya -->
                                 <div class="form-group">
                                     <label for="status">Pilih Status:</label>
                                     <select class="form-control" name="status" id="status">
@@ -128,7 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php include 'footer.php'; ?>
         </div>
-
     </div>
 
     <script src="vendor/jquery/jquery.min.js"></script>

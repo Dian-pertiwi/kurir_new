@@ -35,7 +35,7 @@ $queryKurir = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'")
                             </div>
                             <?php endif; ?>
 
-                            <?php if ($_SESSION['level'] === 'admin'): ?>
+                            <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
                             <button class="btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#modalTambahWilayah">
                                 <i class="fas fa-plus"></i> Tambah Tarif
@@ -50,7 +50,7 @@ $queryKurir = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'")
                                         <th>Kabupaten Asal</th>
                                         <th>Kabupaten Tujuan</th>
                                         <th>Tarif Ongkir</th>
-                                        <?php if ($_SESSION['level'] === 'admin'): ?>
+                                        <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
                                         <th>Aksi</th>
                                         <?php endif; ?>
                                     </tr>
@@ -80,7 +80,7 @@ JOIN
                                         <td><?php echo $row['kabupaten_asal']; ?></td>
                                         <td><?php echo $row['kabupaten_tujuan']; ?></td>
                                         <td>Rp <?php echo number_format($row['tarif'], 0, ',', '.'); ?></td>
-                                        <?php if ($_SESSION['level'] === 'admin'): ?>
+                                        <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
                                         <td>
                                             <a href="edit_tarif.php?id=<?php echo $row['id_tarif']; ?>"
                                                 class="btn btn-outline-primary btn-sm">
@@ -124,8 +124,7 @@ JOIN
 </body>
 
 
-
-<?php if ($_SESSION['level'] === 'admin'): ?>
+<?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
 <!-- Modal Tambah Wilayah -->
 <div class="modal fade" id="modalTambahWilayah" tabindex="-1" role="dialog" aria-labelledby="modalLabelWilayah"
     aria-hidden="true">

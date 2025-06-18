@@ -13,7 +13,7 @@ if (isset($_POST['login'])) {
     $_SESSION['id_user']   = $data['id_user'];
     $_SESSION['username']  = $data['username'];
     $_SESSION['nama_user'] = $data['nama_user'];
-    $_SESSION['role']     = $data['role'];
+    $_SESSION['level']     = $data['role'];
 
     if (isset($_POST['remember'])) {
         setcookie('username', $username, time() + (86400 * 30), "/");

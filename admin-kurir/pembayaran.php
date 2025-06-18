@@ -1,15 +1,27 @@
 <?php
+
+session_start();
 include 'config/koneksi.php';
-$uploaded_file = $target_dir = "img/bukti_tf_admin/";
+
+// Cek apakah sudah login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Query data kurir
+$query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
+
+$id_order = '';
+$uploaded_file = 'img/bukti_tf_admin/default.jpg'; // default preview
 $status_upload = 'Belum upload';
 
-if (isset($_POST['id_order'])) {
-    $id_order = $_POST['id_order'];
-
+if (isset($_GET['id_order'])) {
+    $id_order = $_GET['id_order'];
     $query = "SELECT bukti_tf_admin FROM tbl_pengiriman_paket WHERE id_pengiriman = '$id_order'";
     $result = mysqli_query($conn, $query);
     if ($row = mysqli_fetch_assoc($result)) {
-        if (!empty($row['bukti_transfer_admin'])) {
+        if (!empty($row['bukti_tf_admin'])) {
             $uploaded_file = $row['bukti_tf_admin'];
             $status_upload = 'Sudah upload';
         }
@@ -22,6 +34,7 @@ if (isset($_POST['uploadBukti'])) {
 
     if (!empty($_FILES['bukti_tf_admin']['name'])) {
         $file_name = basename($_FILES["bukti_tf_admin"]["name"]);
+        $file_name = preg_replace("/[^a-zA-Z0-9.]/", "_", $file_name); // Hindari karakter aneh
         $target_file = $target_dir . time() . '_' . $file_name;
         $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
@@ -30,7 +43,8 @@ if (isset($_POST['uploadBukti'])) {
             if (move_uploaded_file($_FILES["bukti_tf_admin"]["tmp_name"], $target_file)) {
                 $sql = "UPDATE tbl_pengiriman_paket SET bukti_tf_admin = '$target_file' WHERE id_pengiriman = '$id_order'";
                 if (mysqli_query($conn, $sql)) {
-                    echo "<script>alert('Bukti transfer berhasil diupload!'); window.location.href='pembayaran.php';</script>";
+                    echo "<script>alert('Bukti transfer berhasil diupload!'); window.location.href='".$_SERVER['PHP_SELF']."?id_order=$id_order';</script>";
+                    exit;
                 } else {
                     echo "<script>alert('Gagal menyimpan ke database.');</script>";
                 }
@@ -44,11 +58,44 @@ if (isset($_POST['uploadBukti'])) {
         echo "<script>alert('Pilih file terlebih dahulu.');</script>";
     }
 }
+
+?>
+
+<?php
+$preview_status = 'Belum upload';
+$uploaded_file = 'img/bukti_tf_admin/default.jpg';
+
+$nama_penerima = '';
+$alamat_penerima = '';
+$hp_penerima = '';
+
+if (isset($_GET['id_order'])) {
+    $id_order = $_GET['id_order'];
+    $query = "SELECT bukti_tf_admin, nama_penerima, alamat_penerima, hp_penerima 
+              FROM tbl_pengiriman_paket WHERE id_pengiriman = '$id_order'";
+    $result = mysqli_query($conn, $query);
+    if ($row = mysqli_fetch_assoc($result)) {
+        $nama_penerima = $row['nama_penerima'];
+        $alamat_penerima = $row['alamat_penerima'];
+        $hp_penerima = $row['hp_penerima'];
+
+        if (!empty($row['bukti_tf_admin'])) {
+            $uploaded_file = $row['bukti_tf_admin'];
+            $preview_status = 'Sudah upload';
+        }
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <?php include 'head.php'; ?>
+
+<?php 
+$preview_status = 'Belum upload';
+$uploaded_file = 'img/bukti_tf_admin/default.jpg';
+?>
 
 <body id="page-top">
     <div id="wrapper">
@@ -66,30 +113,33 @@ if (isset($_POST['uploadBukti'])) {
                                     <h6 class="m-0 font-weight-bold text-primary">Form Upload Bukti Transfer</h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="#" method="post" enctype="multipart/form-data">
+                                    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post"
+                                        enctype="multipart/form-data">
                                         <div class="form-group">
                                             <label for="id_order">Pilih ID Order</label>
                                             <select name="id_order" id="id_order" class="form-control"
-                                                onchange="isiDataPenerima()">
+                                                onchange="this.form.submit()">
                                                 <option value="">-- Pilih --</option>
                                                 <?php
-                                            $query = "SELECT id_pengiriman, nama_penerima, alamat_penerima, hp_penerima FROM tbl_pengiriman_paket";
-                                            $result = mysqli_query($conn, $query);
-                                            while ($row = mysqli_fetch_assoc($result)) {
-                                                echo '<option value="' . $row['id_pengiriman'] . '" 
-                                                    data-nama="' . htmlspecialchars($row['nama_penerima']) . '" 
-                                                    data-alamat="' . htmlspecialchars($row['alamat_penerima']) . '" 
-                                                    data-hp="' . htmlspecialchars($row['hp_penerima']) . '">
-                                                    ORDER #' . $row['id_pengiriman'] . '
-                                                </option>';
-                                            }
-                                            ?>
+                                                $query = "SELECT id_pengiriman, nama_penerima, alamat_penerima, hp_penerima FROM tbl_pengiriman_paket";
+                                                $result = mysqli_query($conn, $query);
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    $selected = ($row['id_pengiriman'] == $id_order) ? 'selected' : '';
+                                                    echo '<option value="' . $row['id_pengiriman'] . '" ' . $selected . '
+                                                        data-nama="' . htmlspecialchars($row['nama_penerima']) . '" 
+                                                        data-alamat="' . htmlspecialchars($row['alamat_penerima']) . '" 
+                                                        data-hp="' . htmlspecialchars($row['hp_penerima']) . '">
+                                                        ORDER #' . $row['id_pengiriman'] . '
+                                                    </option>';
+                                                }
+                                                ?>
                                             </select>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="nama_penerima">Nama Penerima</label>
-                                            <input type="text" class="form-control" id="nama_penerima" readonly>
+                                            <input type="text" class="form-control" id="nama_penerima" readonly
+                                                value="<?= htmlspecialchars($nama_penerima) ?>">
                                         </div>
                                         <div class="form-group">
                                             <label for="alamat">Alamat Penerima</label>
@@ -102,7 +152,7 @@ if (isset($_POST['uploadBukti'])) {
                                         <div class="form-group">
                                             <label for="bukti_transfer">Bukti Transfer</label>
                                             <input type="file" class="form-control-file" id="bukti_transfer"
-                                                name="bukti_tf_admin" f accept="image/*">
+                                                name="bukti_tf_admin" accept="image/*">
                                         </div>
                                         <button type="submit" name="uploadBukti" class="btn btn-success">Upload</button>
                                     </form>
@@ -118,8 +168,7 @@ if (isset($_POST['uploadBukti'])) {
                                 </div>
                                 <div class="card-body text-center">
                                     <?php
-                                $preview_file = 'img/bukti_tf_admin/';
-                                $preview_status = 'Belum upload';
+                               
 
                                 if (!empty($_POST['id_order'])) {
                                     $id_order = $_POST['id_order'];
