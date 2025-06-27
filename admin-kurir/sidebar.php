@@ -1,10 +1,10 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav sidebar accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
         <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-shipping-fast"></i>
+            <i class="fas fa-shipping-fast text-white"></i>
         </div>
         <div class="sidebar-brand-text mx-3">Becat Kurir</div>
     </a>
@@ -14,7 +14,7 @@
 
     <!-- Menu untuk semua user -->
     <li class="nav-item">
-        <a class="nav-link" href="index.php">
+        <a class="nav-link" href="dashboard.php">
             <i class="fas fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
@@ -46,7 +46,7 @@
             <span>pembayaran</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="akun_pengguna.php">
+        <a class="nav-link" href="akun.php">
             <i class="fas fa-users-cog"></i>
             <span>Akun Pengguna</span></a>
     </li>

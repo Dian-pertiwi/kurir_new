@@ -15,6 +15,10 @@ if (isset($_POST['login'])) {
     $_SESSION['nama'] = $data['nama'];
     $_SESSION['level']     = $data['role'];
 
+    $id_user = (int) $data['id_user'];
+    $aktivitas = "Login ke sistem";
+    mysqli_query($conn, "INSERT INTO tbl_log_aktivitas (id_user, aktivitas) VALUES ($id_user, '$aktivitas')");
+
     if (isset($_POST['remember'])) {
         setcookie('username', $username, time() + (86400 * 30), "/");
     }

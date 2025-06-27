@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+// Cek apakah user sudah login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -39,7 +49,7 @@
                 <div class="container-fluid">
                     <h1 class="h3 mb-4 text-gray-800 no-print">Laporan Pengiriman Paket</h1>
 
-                    <!-- Filter Bulan dan Tahun -->
+                    <!-- Filter -->
                     <form method="GET" action="" class="no-print">
                         <div class="row mb-3">
                             <div class="col-md-3">
@@ -51,7 +61,7 @@
                                     <option value="04">April</option>
                                     <option value="05">Mei</option>
                                     <option value="06">Juni</option>
-                                    <!-- dan seterusnya -->
+                                    <!-- Lanjutkan sesuai kebutuhan -->
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -94,7 +104,6 @@
                                             <th class="no-print">Aksi</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         <!-- Dummy Data -->
                                         <tr>
@@ -109,44 +118,12 @@
                                             <td>-</td>
                                             <td>
                                                 <a href="pembayaran.php?id=PKT001" class="btn btn-info btn-sm no-print">
-                                                    <i class="fas fa-eye"></i> Lihat Detail Pembayaran
+                                                    <i class="fas fa-eye"></i> Lihat Detail
                                                 </a>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>PKT002</td>
-                                            <td>Siti Nurhaliza</td>
-                                            <td>Rahmat Fadilah</td>
-                                            <td>02 Mei 2025</td>
-                                            <td><span class="badge badge-success">Berhasil Dibayar</span></td>
-                                            <td>-</td>
-                                            <td>Rp 40.000</td>
-                                            <td>-</td>
-                                            <td>-</td>
-                                            <td>
-                                                <a href="pembayaran.php?id=PKT002" class="btn btn-info btn-sm no-print">
-                                                    <i class="fas fa-eye"></i> Lihat Detail Pembayaran
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>PKT003</td>
-                                            <td>Deni Setyo</td>
-                                            <td>Wahyu Saputra</td>
-                                            <td>03 Mei 2025</td>
-                                            <td><span class="badge badge-success">Berhasil Dibayar</span></td>
-                                            <td>-</td>
-                                            <td>-</td>
-                                            <td>Rp 70.000</td>
-                                            <td>-</td>
-                                            <td>
-                                                <a href="pembayaran.php?id=PKT003" class="btn btn-info btn-sm no-print">
-                                                    <i class="fas fa-eye"></i> Lihat Detail Pembayaran
-                                                </a>
-                                            </td>
-                                        </tr>
+                                        <!-- Tambahan data lainnya -->
                                     </tbody>
-
                                 </table>
                             </div>
                         </div>
@@ -164,7 +141,6 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
-
 </body>
 
 </html>

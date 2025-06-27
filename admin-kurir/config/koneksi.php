@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
 $user = "root";
-$pass = "";
-$db   = "db_kurir_paket"; 
+$pass = "root";
+$db   = "db_becat_kurir"; 
 
 $conn = mysqli_connect($host, $user, $pass, $db);
 

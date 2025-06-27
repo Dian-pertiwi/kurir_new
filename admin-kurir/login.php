@@ -2,155 +2,163 @@
 session_start();
 include 'config/koneksi.php';
 
-if (isset($_POST['login'])) {
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = md5($_POST['password']); // Tetap gunakan MD5 sesuai struktur database
+$error = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+    $username = isset($_POST['username']) ? mysqli_real_escape_string($conn, $_POST['username']) : '';
+    $password = isset($_POST['password']) ? md5($_POST['password']) : '';
 
     $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE username = '$username' AND password = '$password'");
+
+    if (!$query) {
+        die('Query error: ' . mysqli_error($conn));
+    }
+
     $data = mysqli_fetch_assoc($query);
 
     if ($data) {
-    $_SESSION['id_user']   = $data['id_user'];
-    $_SESSION['username']  = $data['username'];
-    $_SESSION['nama'] = $data['nama'];
-    $_SESSION['level']     = $data['role'];
+        // Simpan ke session
+        $_SESSION['id_user']   = $data['id_user'];
+        $_SESSION['username']  = $data['username'];
+        $_SESSION['nama']      = $data['nama'];
+        $_SESSION['level']     = $data['role'];
 
-    if (isset($_POST['remember'])) {
-        setcookie('username', $username, time() + (86400 * 30), "/");
-    }
+        // ✅ Simpan log aktivitas setelah login sukses
+        $id_user = (int) $data['id_user'];
+        $aktivitas = "Login ke sistem";
+        mysqli_query($conn, "INSERT INTO tbl_log_aktivitas (id_user, aktivitas) VALUES ($id_user, '$aktivitas')");
 
-    // Arahkan sesuai role
-    if ($data['role'] === 'admin') {
+        // Remember Me
+        if (isset($_POST['remember'])) {
+            setcookie('username', $username, time() + (86400 * 30), "/");
+        } else {
+            setcookie('username', '', time() - 3600, "/");
+        }
+
         header("Location: dashboard.php");
-    } elseif ($data['role'] === 'kurir') {
-        header("Location: dashboard.php");
-    } else {
-        $error = "Role tidak dikenali.";
-        header("Location: login.php");
-    }
-
-    exit; // penting: hentikan eksekusi setelah redirec
-
+        exit;
     } else {
         $error = "Username atau password salah!";
     }
 }
-?>
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
 
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Becat Kurir - Login</title>
 
-    <title>SB Admin 2 - Login</title>
-
-    <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <!-- Custom styles for this template-->
+    <!-- Fonts & CSS -->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
 </head>
 
 <body class="bg-gradient-primary">
-
     <div class="container">
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
 
             <div class="col-xl-10 col-lg-12 col-md-9">
-
                 <div class="card o-hidden border-0 shadow-lg my-5">
+
                     <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
+                        <!-- Nested Row -->
                         <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
-                                    </div>
+    <!-- Logo -->
+    <div class="col-lg-6 d-flex flex-column align-items-center justify-content-center text-primary bg-white">
+    <i class="fas fa-shipping-fast fa-7x mb-3"></i>
+    <h4 class="font-weight-bold text-dark">Becat Kurir</h4>
+</div>
 
-                                    <form method="post" action="dashboard.php" class="user">
-                                        <?php if (isset($error)) echo "<div class='alert alert-danger text-center'>$error</div>"; ?>
+    <!-- Form Login -->
+    <div class="col-lg-6">
+        <div class="p-5">
+            <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4">Login Portal</h1>
+            </div>
 
-                                        <div class="form-group">
-                                            <input type="text" name="username"
-                                                value="<?php echo $_COOKIE['username'] ?? ''; ?>"
-                                                class="form-control form-control-user" id="exampleInputEmail"
-                                                aria-describedby="emailHelp" placeholder="Enter username" required>
-                                        </div>
+            <!-- Form -->
+            <form method="post" action="login.php" class="user">
 
-                                        <div class="form-group">
-                                            <input type="password" name="password"
-                                                class="form-control form-control-user" id="exampleInputPassword"
-                                                placeholder="Password" required>
-                                        </div>
+                <?php if ($error): ?>
+                    <div class="alert alert-danger text-center">
+                        <?= $error ?>
+                    </div>
+                <?php endif; ?>
 
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck"
-                                                    name="remember"
-                                                    <?php if (isset($_COOKIE['username'])) echo 'checked'; ?>>
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
-                                            </div>
-                                        </div>
+                <div class="form-group">
+                    <input type="text" name="username"
+                        value="<?= $_COOKIE['username'] ?? '' ?>"
+                        class="form-control form-control-user"
+                        placeholder="Enter username" required>
+                </div>
 
-                                        <!-- Ganti tombol <a> dengan <button> agar bisa men-submit form -->
-                                        <button type="submit" name="login" class="btn btn-primary btn-user btn-block">
-                                            Login
-                                        </button>
+                <div class="form-group position-relative">
+    <input type="password" name="password" id="password"
+        class="form-control form-control-user pr-5"
+        placeholder="Password" required>
 
-                                        <hr>
-                                        <!-- <a href="#" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
-                                        </a>
-                                        <a href="#" class="btn btn-facebook btn-user btn-block">
-                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                                        </a> -->
-                                    </form>
+    <span toggle="#password" class="fas fa-eye toggle-password position-absolute"
+        style="top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer; color: #aaa;"></span>
+</div>
 
-                                    <hr>
-                                    <!-- <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
-                                    </div> -->
-                                </div>
-                            </div>
-                        </div>
+
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox small">
+                        <input type="checkbox" class="custom-control-input" id="customCheck"
+                            name="remember" <?= isset($_COOKIE['username']) ? 'checked' : '' ?>>
+                        <label class="custom-control-label" for="customCheck">
+                            Remember Me
+                        </label>
                     </div>
                 </div>
 
+                <button type="submit" name="login" class="btn btn-primary btn-user btn-block">
+                    Login
+                </button>
+
+            </form>
+
+            <hr>
+        </div>
+    </div>
+</div>
+
+                    </div>
+
+                </div>
             </div>
 
         </div>
 
     </div>
 
-    <!-- Bootstrap core JavaScript-->
+    <!-- Scripts -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.querySelector('.toggle-password');
+    const input = document.querySelector('#password');
+
+    toggle.addEventListener('click', function () {
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+});
+</script>
 
 </body>
 

@@ -10,10 +10,10 @@ if ($_SESSION['level'] === 'kurir') {
 if (isset($_POST['tambahKurir'])) {
     $nama_kurir = $_POST['nama_kurir'];
     $no_hp = $_POST['no_hp'];
-    $alamat = $_POST['alamat'];
+    $alamat = $_POST['alamat_kurir'];
     $status = $_POST['status'];
 
-    $query = "INSERT INTO tbl_data_kurir (nama_kurir, no_hp, alamat, status) 
+    $query = "INSERT INTO tbl_data_kurir (nama_kurir, no_hp, alamat_kurir, status) 
               VALUES ('$nama_kurir', '$no_hp', '$alamat', '$status')";
     mysqli_query($conn, $query);
 
