@@ -1,0 +1,39 @@
+.btn-primary {
+  background-color: #ff4f0f; /* Warna hijau */
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #ff3f33; /* Warna saat hover */
+  transform: scale(1.05); /* Efek membesar sedikit */
+}
+
+.btn-primary:active {
+  transform: scale(0.98); /* Efek saat ditekan */
+}
+
+@media (max-width: 480px) {
+  .btn-responsive {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+
+  .btn-primary {
+    background-color: #ff4f0f; /* Warna hijau */
+    border: none;
+    color: white;
+    padding: 6px 18px;
+    text-align: center;
+    font-size: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+}

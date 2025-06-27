@@ -22,13 +22,22 @@ $resi = isset($_GET['resi']) ? $_GET['resi'] : 'N/A';
     }
 
     .resi-box {
-        font-size: 1.5rem;
-        padding: 10px 20px;
-        background-color: #e7f1ff;
+        font-size: 1.6rem;
+        padding: 12px 24px;
+        background-color: #eaf4ff;
         border: 2px dashed #0d6efd;
         border-radius: 8px;
         display: inline-block;
         margin-top: 10px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .btn-group-custom {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
     }
     </style>
 </head>
@@ -40,20 +49,26 @@ $resi = isset($_GET['resi']) ? $_GET['resi'] : 'N/A';
             <div class="col-md-8">
                 <div class="card shadow card-success">
                     <div class="card-body text-center">
-                        <h2 class="text-success mb-3">✅ Order Berhasil Dikirim!</h2>
-                        <p class="lead">Terima kasih telah menggunakan layanan <strong>Becat Kurir NTB</strong>.</p>
-                        <p>Berikut adalah <strong>nomor resi</strong> pengiriman Anda:</p>
+                        <h2 class="text-success mb-3">✅ Order Berhasil!</h2>
+                        <p class="lead">Terima kasih telah mempercayakan pengiriman Anda kepada <strong>Becat Kurir
+                                NTB</strong>.</p>
+                        <p>Nomor resi pengiriman Anda:</p>
 
                         <div class="resi-box">
                             📦 <?= htmlspecialchars($resi) ?>
                         </div>
 
-                        <p class="mt-4">Silakan simpan atau screenshot nomor resi ini untuk melacak pengiriman Anda.</p>
-                        <a href="index.php" class="btn btn-warning mt-3">🔙 Kembali ke Beranda</a>
+                        <p class="mt-4 mb-0">Silakan simpan atau screenshot nomor resi ini untuk pelacakan.</p>
 
-                        <a href="cetak_resi.php?resi=<?= urlencode($resi) ?>" target="_blank"
-                            class="btn btn-outline-primary mt-2">🖨️ Cetak Resi</a>
-
+                        <div class="btn-group-custom mt-4">
+                            <a href="index.php" class="btn btn-warning">
+                                Kembali ke Beranda
+                            </a>
+                            <a href="cetak_resi.php?resi=<?= urlencode($resi) ?>" target="_blank"
+                                class="btn btn-outline-primary">
+                                Cetak Resi
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

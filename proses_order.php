@@ -1,37 +1,36 @@
 <?php
 include 'admin-kurir/config/koneksi.php';
 
-// Fungsi sederhana untuk escape input (kalau belum pakai prepared statement)
 function escape($conn, $val) {
     return $conn->real_escape_string(trim($val));
 }
 
-// Ambil data dari form & sanitasi
-$nama_pengirim        = escape($conn, $_POST['nama_pengirim']);
-$id_kab_asal          = (int)$_POST['id_kab_asal'];
-$kecamatan_pengirim   = escape($conn, $_POST['kecamatan_pengirim']);
-$alamat_pengirim      = escape($conn, $_POST['alamat_pengirim']);
-$hp_pengirim          = escape($conn, $_POST['hp_pengirim']);
-$id_bank              = (int)$_POST['id_bank'];
-$no_rekening          = escape($conn, $_POST['no_rekening']);
+// --- DATA PENGIRIM ---
+$nama_pengirim      = escape($conn, $_POST['nama_pengirim']);
+$id_kab_asal        = (int)$_POST['id_kab_asal'];
+$kecamatan_pengirim = escape($conn, $_POST['kecamatan_pengirim']);
+$alamat_pengirim    = escape($conn, $_POST['alamat_pengirim']);
+$hp_pengirim        = escape($conn, $_POST['hp_pengirim']);
+$id_bank            = (int)$_POST['id_bank'];
+$no_rekening        = escape($conn, $_POST['no_rekening']);
 
-$nama_penerima        = escape($conn, $_POST['nama_penerima']);
-$id_kab_tujuan        = (int)$_POST['id_kab_tujuan'];
-$kecamatan_penerima   = escape($conn, $_POST['kecamatan_penerima']);
-$alamat_penerima      = escape($conn, $_POST['alamat_penerima']);
-$hp_penerima          = escape($conn, $_POST['hp_penerima']);
-$link_maps            = escape($conn, $_POST['link_maps']);
+// --- DATA PENERIMA ---
+$nama_penerima      = escape($conn, $_POST['nama_penerima']);
+$id_kab_tujuan      = (int)$_POST['id_kab_tujuan'];
+$kecamatan_penerima = escape($conn, $_POST['kecamatan_penerima']);
+$alamat_penerima    = escape($conn, $_POST['alamat_penerima']);
+$hp_penerima        = escape($conn, $_POST['hp_penerima']);
+$link_maps          = escape($conn, $_POST['link_maps']);
 
-$id_jenis_paket       = (int)$_POST['jenis_paket'];
-$berat_barang         = (float)$_POST['berat_barang'];
-$harga_barang         = (float)($_POST['harga_barang'] ?? 0);
-$status_pembayaran    = escape($conn, $_POST['status_pembayaran']);
-$tarif_ongkir         = (float)($_POST['tarif_ongkir'] ?? 0);
+// --- DETAIL BARANG ---
+$id_jenis_paket     = (int)$_POST['jenis_paket'];
+$berat_barang       = (float)$_POST['berat_barang'];
+$harga_barang       = (float)($_POST['harga_barang'] ?? 0);
+$status_pembayaran  = escape($conn, $_POST['status_pembayaran']);
+$id_status_order    = 1; // Menunggu konfirmasi
+$resi               = 'RESI' . strtoupper(uniqid());
 
-$id_status_order      = 1; // default: Menunggu Konfirmasi
-$resi                 = 'RESI' . strtoupper(uniqid());
-
-// Cari id_tarif berdasarkan kabupaten asal & tujuan
+// --- CARI ID TARIF ---
 $id_tarif = null;
 $sql_tarif = "SELECT id_tarif FROM tbl_tarif WHERE id_kab_asal = $id_kab_asal AND id_kab_tujuan = $id_kab_tujuan LIMIT 1";
 $res_tarif = $conn->query($sql_tarif);
@@ -39,36 +38,37 @@ if ($res_tarif && $res_tarif->num_rows > 0) {
     $data_tarif = $res_tarif->fetch_assoc();
     $id_tarif = (int)$data_tarif['id_tarif'];
 } else {
-    die("Gagal: Tidak ditemukan data tarif dari asal ke tujuan.");
+    die("Gagal: Tarif tidak ditemukan.");
 }
 
-// Validasi tarif ditemukan
-if (!$id_tarif) {
-    die("Tarif ongkir tidak ditemukan untuk kabupaten yang dipilih.");
+// --- INSERT tbl_pengirim ---
+$sql_pengirim = "INSERT INTO tbl_pengirim (id_kab_asal, id_bank, id_user, nama_pengirim, kec_pengirim, alamat_pengirim, hp_pengirim, no_rekening) VALUES ($id_kab_asal, $id_bank, NULL, '$nama_pengirim', '$kecamatan_pengirim', '$alamat_pengirim', '$hp_pengirim', '$no_rekening')";
+if (!$conn->query($sql_pengirim)) {
+    die("Gagal menyimpan data pengirim: " . $conn->error);
 }
+$id_pengirim = $conn->insert_id;
 
-// Query simpan ke tabel tbl_pengiriman_paket
-$sql = "INSERT INTO tbl_pengiriman_paket (
-    id_tarif, id_bank, id_status_order, id_kurir_antar, id_kurir_jemput,
-    id_kab_asal, id_kab_tujuan,
-    nama_pengirim, kecamatan_pengirim, alamat_pengirim, hp_pengirim, no_rekening,
-    nama_penerima, kecamatan_penerima, alamat_penerima, hp_penerima, link_maps,
-    id_jenis_paket, berat_barang, harga_barang, status_pembayaran, resi
+// --- INSERT tbl_penerima ---
+$sql_penerima = "INSERT INTO tbl_penerima (id_kab_tujuan, nama_penerima, kec_pengirim, alamat_penerima, hp_penerima, link_maps) VALUES ($id_kab_tujuan, '$nama_penerima', '$kecamatan_penerima', '$alamat_penerima', '$hp_penerima', '$link_maps')";
+if (!$conn->query($sql_penerima)) {
+    die("Gagal menyimpan data penerima: " . $conn->error);
+}
+$id_penerima = $conn->insert_id;
+
+// --- INSERT tbl_pengiriman_paket ---
+$sql_pengiriman = "INSERT INTO tbl_pengiriman_paket (
+    id_tarif, id_pengirim, id_penerima, id_jenis_paket, id_status_order,
+    id_kurir_jemput, id_kurir_antar,
+    berat_barang, harga_barang, status_pembayaran, resi
 ) VALUES (
-    $id_tarif, $id_bank, $id_status_order, NULL, NULL,
-    $id_kab_asal, $id_kab_tujuan,
-    '$nama_pengirim', '$kecamatan_pengirim', '$alamat_pengirim', '$hp_pengirim', '$no_rekening',
-    '$nama_penerima', '$kecamatan_penerima', '$alamat_penerima', '$hp_penerima', '$link_maps',
-    $id_jenis_paket, $berat_barang, $harga_barang, '$status_pembayaran', '$resi'
+    $id_tarif, $id_pengirim, $id_penerima, $id_jenis_paket, $id_status_order,
+    NULL, NULL,
+    $berat_barang, $harga_barang, '$status_pembayaran', '$resi'
 )";
 
-// Eksekusi query simpan ke database
-if ($conn->query($sql)) {
+if ($conn->query($sql_pengiriman)) {
     header("Location: order_sukses.php?status=berhasil&resi=$resi");
     exit();
 } else {
-    // Tampilkan error kalau gagal
-    echo "Gagal menyimpan data: " . $conn->error;
+    echo "Gagal menyimpan data pengiriman: " . $conn->error;
 }
-
-?>

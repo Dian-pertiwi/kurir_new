@@ -8,10 +8,12 @@ if (!isset($_SESSION['id_user'])) {
     exit;
 }
 
-
-
-// Query data kurir
-$query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
+// Ambil data kurir aktif untuk modal
+$kurir_query = mysqli_query($conn, "SELECT * FROM tbl_data_kurir WHERE status = 'aktif'");
+$kurir_options = '';
+while ($kurir = mysqli_fetch_assoc($kurir_query)) {
+    $kurir_options .= '<option value="' . $kurir['id_kurir'] . '">' . $kurir['nama_kurir'] . ' (' . $kurir['alamat_kurir'] . ')</option>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -23,7 +25,6 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include 'navbar.php'; ?>
-
                 <div class="container-fluid">
                     <h1 class="h3 mb-4 text-gray-800">Data Pengiriman</h1>
 
@@ -36,7 +37,6 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>ID Order</th>
                                             <th>Pengirim</th>
                                             <th>Penerima</th>
                                             <th>Kurir Jemput</th>
@@ -49,11 +49,13 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
                                         $sql = "
                                             SELECT 
                                                 pp.id_pengiriman,
-                                                pp.nama_pengirim,
-                                                pp.nama_penerima,
+                                                peng.nama_pengirim,
+                                                pener.nama_penerima,
                                                 kj.nama_kurir AS kurir_jemput,
                                                 ka.nama_kurir AS kurir_antar
                                             FROM tbl_pengiriman_paket pp
+                                            LEFT JOIN tbl_pengirim peng ON pp.id_pengirim = peng.id_pengirim
+                                            LEFT JOIN tbl_penerima pener ON pp.id_penerima = pener.id_penerima
                                             LEFT JOIN tbl_data_kurir kj ON pp.id_kurir_jemput = kj.id_kurir
                                             LEFT JOIN tbl_data_kurir ka ON pp.id_kurir_antar = ka.id_kurir
                                             ORDER BY pp.id_pengiriman DESC
@@ -65,78 +67,23 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
                                             $kode = 'ORD' . str_pad($id, 3, '0', STR_PAD_LEFT);
                                         ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($kode) ?></td>
                                             <td><?= htmlspecialchars($row['nama_pengirim']) ?></td>
                                             <td><?= htmlspecialchars($row['nama_penerima']) ?></td>
                                             <td><?= htmlspecialchars($row['kurir_jemput'] ?? '-') ?></td>
                                             <td><?= htmlspecialchars($row['kurir_antar'] ?? '-') ?></td>
                                             <td>
-                                                <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
-                                                <button class="btn btn-success btn-sm" data-toggle="modal"
-                                                    data-target="#modalKonfirmasi<?= $id ?>">
-                                                    <i class="fas fa-check"></i> Konfirmasi
-                                                </button>
-                                                <?php endif; ?>
                                                 <a href="detail_order.php?id=<?= $id ?>" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-eye"></i> Lihat Detail
+                                                    <i class="fas fa-eye"></i> Cek
                                                 </a>
+                                                <a href="hapus_order.php?id=<?= $id ?>" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Yakin hapus order ini?')">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </a>
+
                                             </td>
                                         </tr>
-                                        <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
 
                                         <!-- Modal Konfirmasi -->
-                                        <div class="modal fade" id="modalKonfirmasi<?= $id ?>" tabindex="-1"
-                                            role="dialog" aria-labelledby="modalKonfirmasiLabel<?= $id ?>"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <form action="proses_konfirmasi.php" method="POST">
-                                                    <input type="hidden" name="id_order" value="<?= $id ?>">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="modalKonfirmasiLabel<?= $id ?>">
-                                                                Konfirmasi Order #<?= $kode ?>
-                                                            </h5>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <?php 
-                                                        $kurir_query = mysqli_query($conn, "SELECT * FROM tbl_data_kurir WHERE status = 'aktif'");
-                                                        $kurir_options = '';
-                                                        while ($kurir = mysqli_fetch_assoc($kurir_query)) {
-                                                            $kurir_options .= '<option value="' . $kurir['id_kurir'] . '">' . $kurir['nama_kurir'] . ' (' . $kurir['alamat'] . ')</option>';
-                                                        }
-                                                        ?>
-                                                        <div class="modal-body">
-                                                            <div class="form-group">
-                                                                <label>Kurir Jemput</label>
-                                                                <select name="id_kurir_jemput" class="form-control"
-                                                                    required>
-                                                                    <option value="">-- Pilih Kurir Jemput --</option>
-                                                                    <?= $kurir_options ?>
-                                                                </select>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label>Kurir Antar</label>
-                                                                <select name="id_kurir_antar" class="form-control"
-                                                                    required>
-                                                                    <option value="">-- Pilih Kurir Antar --</option>
-                                                                    <?= $kurir_options ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="submit" name="konfirmasi"
-                                                                class="btn btn-primary">Konfirmasi</button>
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Batal</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <?php endif; ?>
 
                                         <?php endwhile; ?>
                                     </tbody>
@@ -147,7 +94,6 @@ $query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
 
                 </div>
             </div>
-
             <?php include 'footer.php'; ?>
         </div>
     </div>

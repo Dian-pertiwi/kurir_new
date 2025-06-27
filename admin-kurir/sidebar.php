@@ -26,13 +26,6 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" href="daftar_penugasan.php">
-            <i class="fas fa-tasks"></i>
-            <span>Detail Pengiriman</span></a>
-    </li>
-
-
-    <li class="nav-item">
         <a class="nav-link" href="data_tarif.php">
             <i class="fas fa-credit-card"></i>
             <span>Tarif</span></a>

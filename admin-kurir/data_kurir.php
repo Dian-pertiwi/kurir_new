@@ -89,7 +89,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                                                 <?php echo $row['no_hp']; ?>
                                             </td>
                                             <th>
-                                                <?php echo $row['alamat']; ?>
+                                                <?php echo $row['alamat_kurir']; ?>
                                             </th>
                                             <td><span class="badge badge-success">
                                                     <?php echo $row['status']; ?>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'config/koneksi.php';
+include 'koneksi.php';
 
 if (isset($_POST['login'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
@@ -20,13 +20,13 @@ if (isset($_POST['login'])) {
     }
 
     // Arahkan sesuai role
-    if ($data['role'] === 'admin') {
-        header("Location: dashboard.php");
-    } elseif ($data['role'] === 'kurir') {
-        header("Location: dashboard.php");
+    if ($data['role'] === 'user') {
+        header("Location: user_dashboard.php");
+    } elseif ($data['role'] === 'user') {
+        header("Location: user_dashboard.php");
     } else {
         $error = "Role tidak dikenali.";
-        header("Location: login.php");
+        header("Location: user_login.php");
     }
 
     exit; // penting: hentikan eksekusi setelah redirec
@@ -63,7 +63,7 @@ if (isset($_POST['login'])) {
 
 </head>
 
-<body class="bg-gradient-primary">
+<body class="bg-gradient-warning">
 
     <div class="container">
 
@@ -83,7 +83,7 @@ if (isset($_POST['login'])) {
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
 
-                                    <form method="post" action="dashboard.php" class="user">
+                                    <form method="post" action="user_dashboard.php" class="user">
                                         <?php if (isset($error)) echo "<div class='alert alert-danger text-center'>$error</div>"; ?>
 
                                         <div class="form-group">
@@ -110,7 +110,8 @@ if (isset($_POST['login'])) {
                                         </div>
 
                                         <!-- Ganti tombol <a> dengan <button> agar bisa men-submit form -->
-                                        <button type="submit" name="login" class="btn btn-primary btn-user btn-block">
+                                        <button type="submit" name="login" id="login"
+                                            class="btn btn-primary btn-user btn-block">
                                             Login
                                         </button>
 

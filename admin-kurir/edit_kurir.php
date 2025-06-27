@@ -30,13 +30,13 @@ exit;
 if (isset($_POST['updateKurir'])) {
 $nama_kurir = $_POST['nama_kurir'];
 $no_hp = $_POST['no_hp'];
-$alamat = $_POST['alamat'];
+$alamat = $_POST['alamat_kurir'];
 $status = $_POST['status'];
 
 $update = "UPDATE tbl_data_kurir SET
 nama_kurir = '$nama_kurir',
 no_hp = '$no_hp',
-alamat = '$alamat',
+alamat_kurir = '$alamat',
 status = '$status'
 WHERE id_kurir = '$id_kurir'";
 
@@ -86,8 +86,8 @@ $error = "Gagal memperbarui data.";
                                 </div>
                                 <div class="form-group">
                                     <label>Alamat</label>
-                                    <textarea name="alamat" class="form-control"
-                                        required><?= $data['alamat']; ?></textarea>
+                                    <textarea name="alamat_kurir" class="form-control"
+                                        required><?= $data['alamat_kurir']; ?></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Status</label>

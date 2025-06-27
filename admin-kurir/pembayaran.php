@@ -1,101 +1,36 @@
 <?php
-
 session_start();
 include 'config/koneksi.php';
 
-// Cek apakah sudah login
+// Cek login
 if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit;
 }
 
-// Query data kurir
-$query = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
+// Proses upload file
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_pengiriman']) && isset($_FILES['file_upload'])) {
+    $id = $_POST['id_pengiriman'];
+    $file = $_FILES['file_upload'];
+    $nama_file = time() . '_' . basename($file['name']); // nama unik
+    $tmp = $file['tmp_name'];
+    $tujuan = "uploads/" . $nama_file;
 
-$id_order = '';
-$uploaded_file = 'img/bukti_tf_admin/default.jpg'; // default preview
-$status_upload = 'Belum upload';
-
-if (isset($_GET['id_order'])) {
-    $id_order = $_GET['id_order'];
-    $query = "SELECT bukti_tf_admin FROM tbl_pengiriman_paket WHERE id_pengiriman = '$id_order'";
-    $result = mysqli_query($conn, $query);
-    if ($row = mysqli_fetch_assoc($result)) {
-        if (!empty($row['bukti_tf_admin'])) {
-            $uploaded_file = $row['bukti_tf_admin'];
-            $status_upload = 'Sudah upload';
-        }
-    }
-}
-
-if (isset($_POST['uploadBukti'])) {
-    $id_order = $_POST['id_order'];
-    $target_dir = "img/bukti_tf_admin/";
-
-    if (!empty($_FILES['bukti_tf_admin']['name'])) {
-        $file_name = basename($_FILES["bukti_tf_admin"]["name"]);
-        $file_name = preg_replace("/[^a-zA-Z0-9.]/", "_", $file_name); // Hindari karakter aneh
-        $target_file = $target_dir . time() . '_' . $file_name;
-        $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-        if (in_array($file_type, $allowed_types)) {
-            if (move_uploaded_file($_FILES["bukti_tf_admin"]["tmp_name"], $target_file)) {
-                $sql = "UPDATE tbl_pengiriman_paket SET bukti_tf_admin = '$target_file' WHERE id_pengiriman = '$id_order'";
-                if (mysqli_query($conn, $sql)) {
-                    echo "<script>alert('Bukti transfer berhasil diupload!'); window.location.href='".$_SERVER['PHP_SELF']."?id_order=$id_order';</script>";
-                    exit;
-                } else {
-                    echo "<script>alert('Gagal menyimpan ke database.');</script>";
-                }
-            } else {
-                echo "<script>alert('Gagal mengupload file ke server.');</script>";
-            }
-        } else {
-            echo "<script>alert('Format file tidak didukung. Gunakan JPG, PNG, atau GIF.');</script>";
-        }
+    if (move_uploaded_file($tmp, $tujuan)) {
+        // Simpan ke database (misalnya kolom bukti_transfer)
+        $conn->query("UPDATE tbl_pengiriman_paket SET bukti_tf_admin = '$nama_file' WHERE id_pengiriman = $id");
+        $_SESSION['pesan'] = "Upload berhasil!";
     } else {
-        echo "<script>alert('Pilih file terlebih dahulu.');</script>";
+        $_SESSION['pesan'] = "Upload gagal!";
     }
+
+    header("Location: pembayaran.php");
+    exit;
 }
-
 ?>
-
-<?php
-$preview_status = 'Belum upload';
-$uploaded_file = 'img/bukti_tf_admin/default.jpg';
-
-$nama_penerima = '';
-$alamat_penerima = '';
-$hp_penerima = '';
-
-if (isset($_GET['id_order'])) {
-    $id_order = $_GET['id_order'];
-    $query = "SELECT bukti_tf_admin, nama_penerima, alamat_penerima, hp_penerima 
-              FROM tbl_pengiriman_paket WHERE id_pengiriman = '$id_order'";
-    $result = mysqli_query($conn, $query);
-    if ($row = mysqli_fetch_assoc($result)) {
-        $nama_penerima = $row['nama_penerima'];
-        $alamat_penerima = $row['alamat_penerima'];
-        $hp_penerima = $row['hp_penerima'];
-
-        if (!empty($row['bukti_tf_admin'])) {
-            $uploaded_file = $row['bukti_tf_admin'];
-            $preview_status = 'Sudah upload';
-        }
-    }
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 <?php include 'head.php'; ?>
-
-<?php 
-$preview_status = 'Belum upload';
-$uploaded_file = 'img/bukti_tf_admin/default.jpg';
-?>
 
 <body id="page-top">
     <div id="wrapper">
@@ -104,114 +39,105 @@ $uploaded_file = 'img/bukti_tf_admin/default.jpg';
             <div id="content">
                 <?php include 'navbar.php'; ?>
                 <div class="container-fluid">
-                    <h1 class="h3 mb-4 text-gray-800">Upload Bukti Transfer COD</h1>
-                    <div class="row">
-                        <!-- Form Upload -->
-                        <div class="col-lg-6">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Form Upload Bukti Transfer</h6>
-                                </div>
-                                <div class="card-body">
-                                    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post"
-                                        enctype="multipart/form-data">
-                                        <div class="form-group">
-                                            <label for="id_order">Pilih ID Order</label>
-                                            <select name="id_order" id="id_order" class="form-control"
-                                                onchange="this.form.submit()">
-                                                <option value="">-- Pilih --</option>
-                                                <?php
-                                                $query = "SELECT id_pengiriman, nama_penerima, alamat_penerima, hp_penerima FROM tbl_pengiriman_paket";
-                                                $result = mysqli_query($conn, $query);
-                                                while ($row = mysqli_fetch_assoc($result)) {
-                                                    $selected = ($row['id_pengiriman'] == $id_order) ? 'selected' : '';
-                                                    echo '<option value="' . $row['id_pengiriman'] . '" ' . $selected . '
-                                                        data-nama="' . htmlspecialchars($row['nama_penerima']) . '" 
-                                                        data-alamat="' . htmlspecialchars($row['alamat_penerima']) . '" 
-                                                        data-hp="' . htmlspecialchars($row['hp_penerima']) . '">
-                                                        ORDER #' . $row['id_pengiriman'] . '
-                                                    </option>';
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
+                    <h1 class="h3 mb-4 text-gray-800">Data Pembayaran</h1>
 
-                                        <div class="form-group">
-                                            <label for="nama_penerima">Nama Penerima</label>
-                                            <input type="text" class="form-control" id="nama_penerima" readonly
-                                                value="<?= htmlspecialchars($nama_penerima) ?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="alamat">Alamat Penerima</label>
-                                            <input type="text" class="form-control" id="alamat" readonly>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="hp">Nomor HP Penerima</label>
-                                            <input type="text" class="form-control" id="hp" readonly>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="bukti_transfer">Bukti Transfer</label>
-                                            <input type="file" class="form-control-file" id="bukti_transfer"
-                                                name="bukti_tf_admin" accept="image/*">
-                                        </div>
-                                        <button type="submit" name="uploadBukti" class="btn btn-success">Upload</button>
-                                    </form>
-                                </div>
-                            </div>
+                    <?php if (isset($_SESSION['pesan'])): ?>
+                    <div class="alert alert-info"><?= $_SESSION['pesan']; unset($_SESSION['pesan']); ?></div>
+                    <?php endif; ?>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Pembayaran</h6>
                         </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Pengirim</th>
+                                            <th>Penerima</th>
+                                            <th>Resi</th>
+                                            <th>Kurir Jemput</th>
+                                            <th>Kurir Antar</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $sql = "
+                                            SELECT 
+                                                pp.id_pengiriman,
+                                                peng.nama_pengirim,
+                                                pener.nama_penerima,
+                                                kj.nama_kurir AS kurir_jemput,
+                                                ka.nama_kurir AS kurir_antar
+                                            FROM tbl_pengiriman_paket pp
+                                            LEFT JOIN tbl_pengirim peng ON pp.id_pengirim = peng.id_pengirim
+                                            LEFT JOIN tbl_penerima pener ON pp.id_penerima = pener.id_penerima
+                                            LEFT JOIN tbl_data_kurir kj ON pp.id_kurir_jemput = kj.id_kurir
+                                            LEFT JOIN tbl_data_kurir ka ON pp.id_kurir_antar = ka.id_kurir
+                                            ORDER BY pp.id_pengiriman DESC
+                                        ";
+                                        $query = $conn->query($sql);
 
-                        <!-- Preview -->
-                        <div class="col-lg-6">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-secondary">Preview Bukti Transfer</h6>
-                                </div>
-                                <div class="card-body text-center">
-                                    <?php
-                               
+                                        while ($row = $query->fetch_assoc()):
+                                            $id = $row['id_pengiriman'];
+                                        ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($row['nama_pengirim']) ?></td>
+                                            <td><?= htmlspecialchars($row['nama_penerima']) ?></td>
+                                            <td>ORD<?= str_pad($id, 3, '0', STR_PAD_LEFT) ?></td>
+                                            <td><?= htmlspecialchars($row['kurir_jemput']) ?></td>
+                                            <td><?= htmlspecialchars($row['kurir_antar'] ?? '-') ?></td>
+                                            <td>Belum Bayar</td>
+                                            <td style="width: auto;">
+                                                <div style="display: flex; gap: 8px; align-items: center;">
+                                                    <form action="" method="POST" enctype="multipart/form-data"
+                                                        style="margin: 0;">
+                                                        <!-- hidden ID -->
+                                                        <input type="hidden" name="id_pengiriman" value="<?= $id ?>">
+                                                        <!-- Label upload -->
+                                                        <label for="file-upload-<?= $id ?>"
+                                                            class="btn btn-primary btn-sm" style="margin: 0;">
+                                                            Upload File
+                                                        </label>
+                                                        <input type="file" id="file-upload-<?= $id ?>"
+                                                            name="file_upload" style="display: none;"
+                                                            onchange="this.form.submit()">
+                                                    </form>
 
-                                if (!empty($_POST['id_order'])) {
-                                    $id_order = $_POST['id_order'];
-                                    $query = "SELECT bukti_tf_admin FROM tbl_pengiriman_paket WHERE id_pengiriman = '$id_order'";
-                                    $result = mysqli_query($conn, $query);
-                                    if ($row = mysqli_fetch_assoc($result)) {
-                                        if (!empty($row['bukti_tf_admin'])) {
-                                            $preview_file = $row['bukti_tf_admin'];
-                                            $preview_status = 'Sudah upload';
-                                        }
-                                    }
-                                }
-                                ?>
-                                    <img src="<?= $preview_file ?>" class="img-fluid rounded" style="max-height: 300px;"
-                                        alt="Bukti Transfer">
-                                    <p class="mt-2 mb-0"><strong>Status:</strong> <?= $preview_status ?></p>
-                                </div>
+                                                    <a href="pembayaran.php?id=<?= $id ?>" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Yakin hapus?')">
+                                                        <i class="fas fa-trash"></i> Hapus
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php endwhile; ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
+
                 </div>
-                <?php include 'footer.php'; ?>
             </div>
+            <?php include 'footer.php'; ?>
         </div>
     </div>
 
-    <!-- Script -->
+    <!-- JS -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
-
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
-    function isiDataPenerima() {
-        const selected = document.getElementById("id_order").selectedOptions[0];
-        const nama = selected.getAttribute("data-nama");
-        const alamat = selected.getAttribute("data-alamat");
-        const hp = selected.getAttribute("data-hp");
-
-        document.getElementById("nama_penerima").value = nama || '';
-        document.getElementById("alamat").value = alamat || '';
-        document.getElementById("hp").value = hp || '';
-    }
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
     </script>
 </body>
 
