@@ -34,7 +34,17 @@
 
 
             <div class="cta-buttons" data-aos="fade-up" data-aos-delay="300">
-                <a href="daftar.php" style="background-color: #ff4f0f; color: white;  ">Daftar Sekarang</a>
+            <a href="daftar.php" style="
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ff4f0f;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+">Daftar Sekarang</a>
+
                 <a href="user_login.php" class="btn btn-outline">Login</a>
             </div>
         </div>

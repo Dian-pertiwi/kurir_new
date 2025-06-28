@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "root";
-$db   = "db_kurir_paket"; 
+$db   = "db_becat_kurir"; 
 
 $conn = mysqli_connect($host, $user, $pass, $db);
 
