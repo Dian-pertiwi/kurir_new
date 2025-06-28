@@ -161,7 +161,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     </div>
                     <div class="form-group">
                         <label>Alamat</label>
-                        <textarea name="alamat" class="form-control" required></textarea>
+                        <textarea name="alamat_kurir" class="form-control" required></textarea>
                     </div>
                     <div class="form-group">
                         <label>Status</label>

@@ -3,6 +3,19 @@ include 'init.php';
 $queryKurir = mysqli_query($conn, "SELECT * FROM tbl_user WHERE role = 'kurir'");
 ?>
 
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+include 'config/koneksi.php';
+
+// Cek login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+?>
 
 <!DOCTYPE html>
 <html lang="id">

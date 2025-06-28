@@ -6,6 +6,18 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+include 'config/koneksi.php';
+
+// Cek login
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+
 $id = (int)$_GET['id'];
 
 // Ambil data tarif berdasarkan ID
