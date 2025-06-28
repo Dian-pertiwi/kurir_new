@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $user = "root";
-$pass = "root";
+$pass = "";
 $db   = "db_becat_kurir"; 
 
 $conn = mysqli_connect($host, $user, $pass, $db);
