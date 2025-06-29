@@ -34,7 +34,7 @@
 
 
             <div class="cta-buttons" data-aos="fade-up" data-aos-delay="300">
-            <a href="daftar.php" style="
+                <a href="daftar.php" style="
     display: inline-block;
     padding: 10px 20px;
     background-color: #ff4f0f;
@@ -87,8 +87,9 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="hero-image">
-                            <img src="assets/img/hero-2.png" alt="Kurir Becat NTB" class="img-fluid" data-aos="zoom-out"
-                                data-aos-delay="300" style="width: 300%; height: auto;" class="retina-logo" />
+                            <img src="assets/img/image-benner.webp" alt="Kurir Becat NTB" class="img-fluid"
+                                data-aos="zoom-out" data-aos-delay="300" style="width: 400px; height: 400px;"
+                                class="retina-logo" />
                             <div class="shape-1"></div>
                             <div class="shape-2"></div>
                         </div>
