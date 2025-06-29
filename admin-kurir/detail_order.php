@@ -221,55 +221,7 @@ $order = $result->fetch_assoc();
 
                         </div>
                     </div>
-                    <div class="text-center">
-                        <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
-                        <a href="#" class="btn btn-success btn-sm" data-toggle="modal"
-                            data-target="#modalKonfirmasi<?= $id ?>">
-                            <i class="fas fa-check"></i> Konfirmasi
-                        </a>
-                        <?php endif; ?>
-
-                        <div class="modal fade" id="modalKonfirmasi<?= $id ?>" tabindex="-1" role="dialog"
-                            aria-labelledby="modalKonfirmasiLabel<?= $id ?>" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <form action="proses_konfirmasi.php" method="POST">
-                                    <input type="hidden" name="id_order" value="<?= $id ?>">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalKonfirmasiLabel<?= $id ?>">
-                                                Konfirmasi Order #<?= $kode ?>
-                                            </h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
-                                                <label>Kurir Jemput</label>
-                                                <select name="id_kurir_jemput" class="form-control" required>
-                                                    <option value="">-- Pilih Kurir Jemput --</option>
-                                                    <?= $kurir_options ?>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Kurir Antar</label>
-                                                <select name="id_kurir_antar" class="form-control" required>
-                                                    <option value="">-- Pilih Kurir Antar --</option>
-                                                    <?= $kurir_options ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" name="konfirmasi"
-                                                class="btn btn-primary">Konfirmasi</button>
-                                            <button type="button" class="btn btn-secondary"
-                                                data-dismiss="modal">Batal</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
 
 

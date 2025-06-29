@@ -11,27 +11,60 @@ $id_user = $_SESSION['id_user'];
 $error = null;
 $success = null;
 
-// Ambil data user lama
-$result = mysqli_query($conn, "SELECT * FROM tbl_user WHERE id_user = $id_user");
-$user = mysqli_fetch_assoc($result);
+// Ambil data user
+$result_user = mysqli_query($conn, "SELECT * FROM tbl_user WHERE id_user = $id_user");
+$user = mysqli_fetch_assoc($result_user);
+
+// Ambil data pengirim jika sudah ada
+$result_pengirim = mysqli_query($conn, "SELECT * FROM tbl_pengirim WHERE id_user = $id_user LIMIT 1");
+$pengirim = mysqli_fetch_assoc($result_pengirim);
+$id_pengirim = $pengirim['id_pengirim'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama     = trim(mysqli_real_escape_string($conn, $_POST['nama']));
     $username = trim(mysqli_real_escape_string($conn, $_POST['username']));
     $password = trim($_POST['password']);
 
+    $nama_pengirim    = trim(mysqli_real_escape_string($conn, $_POST['nama_pengirim']));
+    $kec_pengirim     = trim(mysqli_real_escape_string($conn, $_POST['kec_pengirim']));
+    $alamat_pengirim  = trim(mysqli_real_escape_string($conn, $_POST['alamat_pengirim']));
+    $hp_pengirim      = trim(mysqli_real_escape_string($conn, $_POST['hp_pengirim']));
+    $no_rekening      = trim(mysqli_real_escape_string($conn, $_POST['no_rekening']));
+
     if ($nama === '' || $username === '') {
         $error = "Nama dan username wajib diisi.";
     } else {
-        // Jika password tidak diubah
+        // Update data user
         if ($password === '') {
-            $query = "UPDATE tbl_user SET nama='$nama', username='$username' WHERE id_user=$id_user";
+            $query_user = "UPDATE tbl_user SET nama='$nama', username='$username' WHERE id_user=$id_user";
         } else {
             $hashed = md5($password);
-            $query = "UPDATE tbl_user SET nama='$nama', username='$username', password='$hashed' WHERE id_user=$id_user";
+            $query_user = "UPDATE tbl_user SET nama='$nama', username='$username', password='$hashed' WHERE id_user=$id_user";
         }
 
-        if (mysqli_query($conn, $query)) {
+        $update_user = mysqli_query($conn, $query_user);
+
+        // Update atau insert data pengirim
+        if ($id_pengirim) {
+            $query_pengirim = "
+                UPDATE tbl_pengirim SET 
+                    nama_pengirim='$nama_pengirim',
+                    kec_pengirim='$kec_pengirim',
+                    alamat_pengirim='$alamat_pengirim',
+                    hp_pengirim='$hp_pengirim',
+                    no_rekening='$no_rekening'
+                WHERE id_pengirim = $id_pengirim
+            ";
+        } else {
+            $query_pengirim = "
+                INSERT INTO tbl_pengirim (id_user, nama_pengirim, kec_pengirim, alamat_pengirim, hp_pengirim, no_rekening)
+                VALUES ($id_user, '$nama_pengirim', '$kec_pengirim', '$alamat_pengirim', '$hp_pengirim', '$no_rekening')
+            ";
+        }
+
+        $update_pengirim = mysqli_query($conn, $query_pengirim);
+
+        if ($update_user && $update_pengirim) {
             $_SESSION['nama'] = $nama;
             $_SESSION['username'] = $username;
             $success = "Profil berhasil diperbarui.";
@@ -48,11 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <title>Ubah Profil | Becat Kurir NTB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Font & Icon -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
   <style>
     body {
       font-family: 'Nunito', sans-serif;
@@ -60,9 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       margin: 0;
       padding: 0;
       display: flex;
-      height: 100vh;
+      height: auto;
       align-items: center;
       justify-content: center;
+      padding-top: 30px;
     }
 
     .container {
@@ -70,8 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       padding: 2rem;
       border-radius: 12px;
       width: 100%;
-      max-width: 500px;
+      max-width: 600px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      margin-bottom: 40px;
     }
 
     h2 {
@@ -120,16 +152,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       color: #555;
       text-decoration: none;
     }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Ubah Profil</h2>
+    <h2>Ubah Profil Pengguna</h2>
 
     <?php if ($error): ?>
       <div class="alert error"><?= $error ?></div>
     <?php endif; ?>
-
     <?php if ($success): ?>
       <div class="alert success"><?= $success ?></div>
     <?php endif; ?>
@@ -138,6 +173,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <input type="text" name="nama" value="<?= htmlspecialchars($user['nama']) ?>" placeholder="Nama lengkap" required>
       <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" placeholder="Username" required>
       <input type="password" name="password" placeholder="Password baru (kosongkan jika tidak diubah)">
+
+      <hr>
+      <h4>Data Pengirim</h4>
+      <input type="text" name="nama_pengirim" value="<?= htmlspecialchars($pengirim['nama_pengirim'] ?? '') ?>" placeholder="Nama Pengirim" required>
+      <input type="text" name="kec_pengirim" value="<?= htmlspecialchars($pengirim['kec_pengirim'] ?? '') ?>" placeholder="Kecamatan Pengirim" required>
+      <input type="text" name="alamat_pengirim" value="<?= htmlspecialchars($pengirim['alamat_pengirim'] ?? '') ?>" placeholder="Alamat Lengkap" required>
+      <input type="text" name="hp_pengirim" value="<?= htmlspecialchars($pengirim['hp_pengirim'] ?? '') ?>" placeholder="No. HP Pengirim" required>
+      <input type="text" name="no_rekening" value="<?= htmlspecialchars($pengirim['no_rekening'] ?? '') ?>" placeholder="No. Rekening" required>
+
       <button type="submit">Simpan Perubahan</button>
     </form>
 

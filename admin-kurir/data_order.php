@@ -71,22 +71,108 @@ while ($kurir = mysqli_fetch_assoc($kurir_query)) {
                                             <td><?= htmlspecialchars($row['nama_penerima']) ?></td>
                                             <td><?= htmlspecialchars($row['kurir_jemput'] ?? '-') ?></td>
                                             <td><?= htmlspecialchars($row['kurir_antar'] ?? '-') ?></td>
+                                            
                                             <td>
-                                                <a href="detail_order.php?id=<?= $id ?>" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-eye"></i> Cek
-                                                </a>
-                                                <a href="hapus_order.php?id=<?= $id ?>" class="btn btn-danger btn-sm"
-                                                    onclick="return confirm('Yakin hapus order ini?')">
-                                                    <i class="fas fa-trash"></i> Hapus
-                                                </a>
-
+                                                <div class="d-flex flex-wrap gap-1 justify-content-start">
+                                                    <a href="detail_order.php?id=<?= $id ?>" class="btn btn-info btn-sm">
+                                                        <i class="fas fa-eye"></i> Cek
+                                                    </a>
+                                                    <a href="hapus_order.php?id=<?= $id ?>" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Yakin hapus order ini?')">
+                                                        <i class="fas fa-trash"></i> Hapus
+                                                    </a>
+                                                    <a href="#" class="btn btn-success btn-sm" data-toggle="modal"
+                                                        data-target="#modalKonfirmasikurir<?= $id ?>">
+                                                        <i class="fas fa-check"></i> Update Status Pengiriman
+                                                    </a>
+                                                    <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
+                                                    <a href="#" class="btn btn-success btn-sm" data-toggle="modal"
+                                                        data-target="#modalKonfirmasi<?= $id ?>">
+                                                        <i class="fas fa-check"></i> Konfirmasi
+                                                    </a>
+                                                    <?php endif; ?>
+                                                </div>
                                             </td>
+
                                         </tr>
 
                                         <!-- Modal Konfirmasi -->
 
                                         <?php endwhile; ?>
                                     </tbody>
+
+                                    <!-- Modal Konfirmasi -->
+<div class="modal fade" id="modalKonfirmasi<?= $id ?>" tabindex="-1" role="dialog"
+    aria-labelledby="modalKonfirmasiLabel<?= $id ?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form action="proses_konfirmasi.php" method="POST">
+            <input type="hidden" name="id_order" value="<?= $id ?>">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalKonfirmasiLabel<?= $id ?>">
+                        Konfirmasi Order #<?= $kode ?>
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Kurir Jemput</label>
+                        <select name="id_kurir_jemput" class="form-control" required>
+                            <option value="">-- Pilih Kurir Jemput --</option>
+                            <?= $kurir_options ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kurir Antar</label>
+                        <select name="id_kurir_antar" class="form-control" required>
+                            <option value="">-- Pilih Kurir Antar --</option>
+                            <?= $kurir_options ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="konfirmasi" class="btn btn-primary">Konfirmasi</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="modalKonfirmasikurir<?= $id ?>" tabindex="-1" role="dialog"
+    aria-labelledby="modalKonfirmasiLabel<?= $id ?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form action="proses_konfirmasi.php" method="POST">
+            <input type="hidden" name="id_order" value="<?= $id ?>">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalKonfirmasiLabel<?= $id ?>">
+                    Update status Pengiriman
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Status Pengiriman</label>
+                        <select name="id_kurir_jemput" class="form-control" required>
+                            <option value="">-- Status --</option>
+                            <?= $kurir_options ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="konfirmasi" class="btn btn-primary">Konfirmasi</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
                                 </table>
                             </div>
                         </div>
