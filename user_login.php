@@ -189,7 +189,8 @@ if (isset($_POST['login'])) {
     </form>
 
     <div class="back-link">
-      <a href="index.php">← Kembali ke beranda</a>
+      <a href="index.php">← Kembali ke beranda</a>  <br/> <br/>
+      <a href="daftar.php">Belum Punya Akun ?</a>
     </div>
   </div>
 

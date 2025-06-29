@@ -8,20 +8,39 @@ if (!isset($_SESSION['id_user'])) {
     exit;
 }
 
+// Jika ada parameter id dan method GET, lakukan penghapusan
+if (isset($_GET['id'])) {
+    $id = (int)$_GET['id'];
+
+    // Hapus data dari tbl_pengiriman_paket
+    $hapus = mysqli_query($conn, "DELETE FROM tbl_pengiriman_paket WHERE id_pengiriman = $id");
+
+    if ($hapus) {
+        $_SESSION['pesan'] = "Data berhasil dihapus.";
+    } else {
+        $_SESSION['pesan'] = "Gagal menghapus data.";
+    }
+
+    header("Location: pembayaran.php");
+    exit;
+}
+
 // Proses upload file
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_pengiriman']) && isset($_FILES['file_upload'])) {
-    $id = $_POST['id_pengiriman'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_modal'])) {
+    $id = (int)$_POST['id_pengiriman'];
     $file = $_FILES['file_upload'];
-    $nama_file = time() . '_' . basename($file['name']); // nama unik
+    $nama_file = time() . '_' . basename($file['name']);
     $tmp = $file['tmp_name'];
     $tujuan = "uploads/" . $nama_file;
 
     if (move_uploaded_file($tmp, $tujuan)) {
-        // Simpan ke database (misalnya kolom bukti_transfer)
-        $conn->query("UPDATE tbl_pengiriman_paket SET bukti_tf_admin = '$nama_file' WHERE id_pengiriman = $id");
-        $_SESSION['pesan'] = "Upload berhasil!";
+        $sql = "UPDATE tbl_pengiriman_paket 
+                SET bukti_tf_admin = '$nama_file', status_pembayaran = 'sudah bayar' 
+                WHERE id_pengiriman = $id";
+        $conn->query($sql);
+        $_SESSION['pesan'] = "Upload dan update status pembayaran berhasil!";
     } else {
-        $_SESSION['pesan'] = "Upload gagal!";
+        $_SESSION['pesan'] = "Upload gagal. Coba lagi.";
     }
 
     header("Location: pembayaran.php");
@@ -71,7 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_pengiriman']) && i
                                                 peng.nama_pengirim,
                                                 pener.nama_penerima,
                                                 kj.nama_kurir AS kurir_jemput,
-                                                ka.nama_kurir AS kurir_antar
+                                                ka.nama_kurir AS kurir_antar,
+                                                pp.status_pembayaran
                                             FROM tbl_pengiriman_paket pp
                                             LEFT JOIN tbl_pengirim peng ON pp.id_pengirim = peng.id_pengirim
                                             LEFT JOIN tbl_penerima pener ON pp.id_penerima = pener.id_penerima
@@ -90,22 +110,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_pengiriman']) && i
                                             <td>ORD<?= str_pad($id, 3, '0', STR_PAD_LEFT) ?></td>
                                             <td><?= htmlspecialchars($row['kurir_jemput']) ?></td>
                                             <td><?= htmlspecialchars($row['kurir_antar'] ?? '-') ?></td>
-                                            <td>Belum Bayar</td>
+                                            <td><?= htmlspecialchars($row['status_pembayaran'] ?? '-') ?></td>
                                             <td style="width: auto;">
                                                 <div style="display: flex; gap: 8px; align-items: center;">
-                                                    <form action="" method="POST" enctype="multipart/form-data"
-                                                        style="margin: 0;">
-                                                        <!-- hidden ID -->
-                                                        <input type="hidden" name="id_pengiriman" value="<?= $id ?>">
-                                                        <!-- Label upload -->
-                                                        <label for="file-upload-<?= $id ?>"
-                                                            class="btn btn-primary btn-sm" style="margin: 0;">
-                                                            Upload File
-                                                        </label>
-                                                        <input type="file" id="file-upload-<?= $id ?>"
-                                                            name="file_upload" style="display: none;"
-                                                            onchange="this.form.submit()">
-                                                    </form>
+                                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#uploadModal<?= $id ?>">
+                                                    Upload Bukti
+                                                </button>
 
                                                     <a href="pembayaran.php?id=<?= $id ?>" class="btn btn-danger btn-sm"
                                                         onclick="return confirm('Yakin hapus?')">
@@ -115,6 +125,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_pengiriman']) && i
                                             </td>
                                         </tr>
                                         <?php endwhile; ?>
+                                        <?php
+mysqli_data_seek($query, 0); // reset pointer
+while ($row = $query->fetch_assoc()):
+    $id = $row['id_pengiriman'];
+?>
+<div class="modal fade" id="uploadModal<?= $id ?>" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel<?= $id ?>" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <form method="POST" action="" enctype="multipart/form-data">
+      <input type="hidden" name="id_pengiriman" value="<?= $id ?>">
+      <input type="hidden" name="upload_modal" value="1">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="uploadModalLabel<?= $id ?>">Upload Bukti Pembayaran</h5>
+          <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="form-group">
+            <label for="fileUpload<?= $id ?>" class="font-weight-bold mb-2">Pilih gambar bukti transfer:</label>
+            <input type="file" name="file_upload" id="fileUpload<?= $id ?>" class="form-control-file" accept="image/*" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Upload</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<?php endwhile; ?>
+
                                     </tbody>
                                 </table>
                             </div>

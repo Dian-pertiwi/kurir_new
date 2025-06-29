@@ -1,6 +1,8 @@
 <?php include 'admin-kurir/config/koneksi.php'; ?>
 <!DOCTYPE html>
+
 <html lang="id">
+
 <?php include 'head.php'; ?>
 
 <section id="form_pengiriman" class="form_pengiriman section">
@@ -13,7 +15,7 @@
         <form action="proses_order.php" method="POST" enctype="multipart/form-data" class="card shadow p-4 border-0">
             <div class="row">
                 <!-- DATA PENGIRIM -->
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <h5 class="mb-3">Data Pengirim</h5>
                     <div class="mb-3">
                         <label>Nama Pengirim</label>
@@ -60,17 +62,17 @@
                         <label>No. Rekening</label>
                         <input type="text" name="no_rekening" class="form-control" required>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- DATA PENERIMA -->
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <h5 class="mb-3">Data Penerima</h5>
                     <div class="mb-3">
-                        <label>Nama Penerima</label>
+                        <label style="">Nama Penerima <span style="color: red;">*</span></label>
                         <input type="text" name="nama_penerima" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label>Kabupaten Penerima</label>
+                        <label>Kabupaten Penerima <span style="color: red;">*</span></label>
                         <select id="kabupaten_penerima" name="id_kab_tujuan" class="form-control" required>
                             <option value="">Pilih Kabupaten</option>
                             <?php
@@ -82,16 +84,16 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label>Kecamatan Penerima</label>
+                        <label>Kecamatan Penerima <span style="color: red;">*</span></label>
                         <select name="kecamatan_penerima" id="kecamatan_penerima" class="form-control"
                             required></select>
                     </div>
                     <div class="mb-3">
-                        <label>Alamat Lengkap Penerima</label>
+                        <label>Alamat Lengkap Penerima <span style="color: red;">*</span></label>
                         <textarea name="alamat_penerima" class="form-control" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label>No. HP Penerima</label>
+                        <label>No. HP Penerima <span style="color: red;">*</span></label>
                         <input type="text" name="hp_penerima" class="form-control" required>
                     </div>
                     <div class="mb-3">
@@ -106,7 +108,7 @@
             <!-- DETAIL BARANG -->
             <h5 class="mb-3">Detail Barang</h5>
             <div class="mb-3">
-                <label>Jenis Barang</label>
+                <label>Jenis Barang <span style="color: red;">*</span></label>
                 <select name="jenis_paket" class="form-control" required>
                     <option value="">-- Pilih Jenis Paket --</option>
                     <?php
@@ -118,22 +120,22 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label>Berat Barang (kg)</label>
+                <label>Berat Barang (kg) <span style="color: red;">*</span></label>
                 <input type="number" name="berat_barang" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label>Harga Barang (jika COD)</label>
+                <label>Harga Barang (jika COD) <span style="color: red;">*</span></label>
                 <input type="number" name="harga_barang" class="form-control">
             </div>
             <div class="mb-3">
-                <label>Status Pembayaran</label>
+                <label>Status Pembayaran <span style="color: red;">*</span></label>
                 <select name="status_pembayaran" class="form-control" required>
                     <option value="belum bayar">Belum Bayar</option>
                     <option value="sudah bayar">Sudah Bayar</option>
                 </select>
             </div>
             <div class="mb-3">
-                <label>Pilih Tarif Berdasarkan Kabupaten</label>
+                <label>Pilih Tarif Berdasarkan Kabupaten <span style="color: red;">*</span></label>
                 <select name="id_tarif" class="form-control" required>
                     <option value="">Pilih Tarif</option>
                     <?php
@@ -168,9 +170,9 @@ function loadKecamatan(selectKabupatenId, targetKecamatanId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("kabupaten_pengirim").addEventListener("change", function() {
-        loadKecamatan("kabupaten_pengirim", "kecamatan_pengirim");
-    });
+    // document.getElementById("kabupaten_pengirim").addEventListener("change", function() {
+    //     loadKecamatan("kabupaten_pengirim", "kecamatan_pengirim");
+    // });
 
     document.getElementById("kabupaten_penerima").addEventListener("change", function() {
         loadKecamatan("kabupaten_penerima", "kecamatan_penerima");

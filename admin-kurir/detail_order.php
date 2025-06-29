@@ -52,185 +52,182 @@ $order = $result->fetch_assoc();
 
 <!DOCTYPE html>
 <html lang="id">
-
 <?php include 'head.php'; ?>
 
 <body id="page-top">
-    <div id="wrapper">
-        <?php include 'sidebar.php'; ?>
+<div id="wrapper">
+    <?php include 'sidebar.php'; ?>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <?php include 'navbar.php'; ?>
+            <?php if (isset($_GET['status']) && $_GET['status'] == 'ditolak'): ?>
+  <div class="alert alert-danger">Order berhasil ditolak dan status diubah menjadi <strong>Gagal Dikirim</strong>.</div>
+<?php endif; ?>
 
-        <div id="content-wrapper" class="d-flex flex-column">
-            <div id="content">
-                <?php include 'navbar.php'; ?>
+            <div class="container-fluid">
 
-                <div class="container-fluid">
-                    <h1 class="h3 mb-4 text-gray-800">Detail Orderan</h1>
+                <h1 class="h3 mb-4 text-gray-800">Detail Orderan</h1>
 
-                    <!-- ROW 1: PENGIRIM & PENERIMA -->
-                    <div class="row mb-4">
-                        <!-- Pengirim -->
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header bg-primary text-white">Informasi Pengirim</div>
-                                <div class="card-body p-2">
-                                    <table class="table table-sm table-borderless">
-                                        <tr>
-                                            <td width="40%"><strong>Nama</strong></td>
-                                            <td>: <?= htmlspecialchars($order['nama_pengirim']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Kabupaten</strong></td>
-                                            <td>: <?= htmlspecialchars($order['kabupaten_asal']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Kecamatan</strong></td>
-                                            <td>: <?= htmlspecialchars($order['kecamatan_pengirim']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Alamat</strong></td>
-                                            <td>: <?= nl2br(htmlspecialchars($order['alamat_pengirim'])) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>HP</strong></td>
-                                            <td>: <?= htmlspecialchars($order['hp_pengirim']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Bank</strong></td>
-                                            <td>: <?= htmlspecialchars($order['nama_bank']) ?> -
-                                                <?= htmlspecialchars($order['no_rekening']) ?></td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                <?php if (isset($_GET['success']) && $_GET['success'] === 'konfirmasi'): ?>
+                    <div class="alert alert-success">Order berhasil dikonfirmasi!</div>
+                <?php endif; ?>
 
-                        <!-- Penerima -->
-                        <div class="col-md-6 mt-4 mt-md-0">
-                            <div class="card h-100">
-                                <div class="card-header bg-success text-white">Informasi Penerima</div>
-                                <div class="card-body p-2">
-                                    <table class="table table-sm table-borderless">
-                                        <tr>
-                                            <td width="40%"><strong>Nama</strong></td>
-                                            <td>: <?= htmlspecialchars($order['nama_penerima']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Kabupaten</strong></td>
-                                            <td>: <?= htmlspecialchars($order['kabupaten_tujuan']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Kecamatan</strong></td>
-                                            <td>: <?= htmlspecialchars($order['kecamatan_penerima']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Alamat</strong></td>
-                                            <td>: <?= nl2br(htmlspecialchars($order['alamat_penerima'])) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>HP</strong></td>
-                                            <td>: <?= htmlspecialchars($order['hp_penerima']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Link Maps</strong></td>
-                                            <td>: <a href="<?= htmlspecialchars($order['link_maps']) ?>"
-                                                    target="_blank">Lihat Lokasi</a></td>
-                                        </tr>
-                                    </table>
-                                </div>
+                <!-- ROW 1: PENGIRIM & PENERIMA -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-primary text-white">Informasi Pengirim</div>
+                            <div class="card-body p-2">
+                                <table class="table table-sm table-borderless">
+                                    <tr><td><strong>Nama</strong></td><td>: <?= htmlspecialchars($order['nama_pengirim']) ?></td></tr>
+                                    <tr><td><strong>Kabupaten</strong></td><td>: <?= htmlspecialchars($order['kabupaten_asal']) ?></td></tr>
+                                    <tr><td><strong>Kecamatan</strong></td><td>: <?= htmlspecialchars($order['kecamatan_pengirim']) ?></td></tr>
+                                    <tr><td><strong>Alamat</strong></td><td>: <?= nl2br(htmlspecialchars($order['alamat_pengirim'])) ?></td></tr>
+                                    <tr><td><strong>HP</strong></td><td>: <?= htmlspecialchars($order['hp_pengirim']) ?></td></tr>
+                                    <tr><td><strong>Bank</strong></td><td>: <?= htmlspecialchars($order['nama_bank']) ?> - <?= htmlspecialchars($order['no_rekening']) ?></td></tr>
+                                </table>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ROW 2: BARANG & PENGIRIMAN -->
-                    <div class="row mb-4">
-                        <!-- Barang -->
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header bg-warning text-dark">Detail Barang</div>
-                                <div class="card-body p-2">
-                                    <table class="table table-sm table-borderless">
-                                        <tr>
-                                            <td width="40%"><strong>Jenis Paket</strong></td>
-                                            <td>: <?= htmlspecialchars($order['nama_jenis_paket']) ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Berat</strong></td>
-                                            <td>: <?= htmlspecialchars($order['berat_barang']) ?> kg</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Harga</strong></td>
-                                            <td>: Rp <?= number_format($order['harga_barang'], 0, ',', '.') ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Status Pembayaran (Lunas/COD) </strong></td>
-                                            <td>: <?= ucfirst($order['status_pembayaran']) ?></td>
-                                        </tr>
-                                    </table>
-                                </div>
+                    <div class="col-md-6 mt-4 mt-md-0">
+                        <div class="card h-100">
+                            <div class="card-header bg-success text-white">Informasi Penerima</div>
+                            <div class="card-body p-2">
+                                <table class="table table-sm table-borderless">
+                                    <tr><td><strong>Nama</strong></td><td>: <?= htmlspecialchars($order['nama_penerima']) ?></td></tr>
+                                    <tr><td><strong>Kabupaten</strong></td><td>: <?= htmlspecialchars($order['kabupaten_tujuan']) ?></td></tr>
+                                    <tr><td><strong>Kecamatan</strong></td><td>: <?= htmlspecialchars($order['kecamatan_penerima']) ?></td></tr>
+                                    <tr><td><strong>Alamat</strong></td><td>: <?= nl2br(htmlspecialchars($order['alamat_penerima'])) ?></td></tr>
+                                    <tr><td><strong>HP</strong></td><td>: <?= htmlspecialchars($order['hp_penerima']) ?></td></tr>
+                                    <tr><td><strong>Link Maps</strong></td><td>: <a href="<?= htmlspecialchars($order['link_maps']) ?>" target="_blank">Lihat Lokasi</a></td></tr>
+                                </table>
                             </div>
-                        </div>
-
-                        <!-- Pengiriman -->
-                        <div class="col-md-6 mt-4 mt-md-0">
-                            <div class="card h-100">
-                                <div class="card-header bg-info text-white">Informasi Pengiriman</div>
-                                <div class="card-body p-2">
-                                    <table class="table table-sm table-borderless">
-                                        <tr>
-                                            <td width="40%"><strong>Kurir Jemput</strong></td>
-                                            <td>: <?= htmlspecialchars($order['kurir_jemput'] ?? '-') ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Kurir Antar</strong></td>
-                                            <td>: <?= htmlspecialchars($order['kurir_antar'] ?? '-') ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Tarif Ongkir</strong></td>
-                                            <td>: Rp <?= number_format($order['tarif'], 0, ',', '.') ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Resi</strong></td>
-                                            <td>: <?= htmlspecialchars($order['resi'] ?? '-') ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Status Order</strong></td>
-                                            <td>: <?= htmlspecialchars($order['nama_status']) ?>
-                                                <small>(<?= htmlspecialchars($order['keterangan']) ?>)</small>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Waktu Konfirmasi</strong></td>
-                                            <td>:
-                                                <?= $order['waktu_konfirmasi'] ? date('d M Y H:i', strtotime($order['waktu_konfirmasi'])) : '-' ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Bukti Transfer</strong></td>
-                                            <td>:
-                                                <?php if (!empty($order['bukti_tf_admin'])): ?>
-                                                <a href="uploads/<?= htmlspecialchars($order['bukti_tf_admin']) ?>"
-                                                    target="_blank">Lihat Bukti</a>
-                                                <?php else: ?>
-                                                Belum Diupload
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
-                   
                 </div>
 
+                <!-- ROW 2: BARANG & PENGIRIMAN -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-warning text-dark">Detail Barang</div>
+                            <div class="card-body p-2">
+                                <table class="table table-sm table-borderless">
+                                    <tr><td><strong>Jenis Paket</strong></td><td>: <?= htmlspecialchars($order['nama_jenis_paket']) ?></td></tr>
+                                    <tr><td><strong>Berat</strong></td><td>: <?= htmlspecialchars($order['berat_barang']) ?> kg</td></tr>
+                                    <tr><td><strong>Harga</strong></td><td>: Rp <?= number_format($order['harga_barang'], 0, ',', '.') ?></td></tr>
+                                    <tr><td><strong>Status Pembayaran</strong></td><td>: <?= ucfirst($order['status_pembayaran']) ?></td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mt-4 mt-md-0">
+                        <div class="card h-100">
+                            <div class="card-header bg-info text-white">Informasi Pengiriman</div>
+                            <div class="card-body p-2">
+                                <table class="table table-sm table-borderless">
+                                    <tr><td><strong>Kurir Jemput</strong></td><td>: <?= htmlspecialchars($order['kurir_jemput'] ?? '-') ?></td></tr>
+                                    <tr><td><strong>Kurir Antar</strong></td><td>: <?= htmlspecialchars($order['kurir_antar'] ?? '-') ?></td></tr>
+                                    <tr><td><strong>Tarif Ongkir</strong></td><td>: Rp <?= number_format($order['tarif'], 0, ',', '.') ?></td></tr>
+                                    <tr><td><strong>Resi</strong></td><td>: <?= htmlspecialchars($order['resi']) ?></td></tr>
+                                    <tr><td><strong>Status</strong></td><td>: <?= $order['nama_status'] ?> <small>(<?= $order['keterangan'] ?>)</small></td></tr>
+                                    <tr><td><strong>Waktu Konfirmasi</strong></td><td>: <?= $order['waktu_konfirmasi'] ? date('d M Y H:i', strtotime($order['waktu_konfirmasi'])) : '-' ?></td></tr>
+                                    <tr><td><strong>Bukti Transfer</strong></td><td>: <?= $order['bukti_tf_admin'] ? "<a href='uploads/{$order['bukti_tf_admin']}' target='_blank'>Lihat Bukti</a>" : "Belum Diupload" ?></td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
 
-            </div>
+                    <div class="col-md-6 mt-4 mt-md-0">
+                        <div class="card h-100">
+                            <div class="card-header bg-info text-white">Update Status Pengiriman</div>
+                            <div class="card-body p-2">
+                            <?php if (isset($_SESSION['level']) && $_SESSION['level'] !== 'kurir'): ?>
+                            <div class="col-mb-6">
+                                <a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalKonfirmasi<?= $id_order ?>">
+                                    <i class="fas fa-check"></i> Konfirmasi Pengiriman
+                                </a>
+                                <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#modalTolakKonfirmasi<?= $id_order ?>">
+                                    <i class="fas fa-check"></i> Tolak Status 
+                                </a>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <?php include 'footer.php'; ?>
+                <!-- Modal Konfirmasi -->
+                <div class="modal fade" id="modalKonfirmasi<?= $id_order ?>" tabindex="-1" role="dialog" aria-labelledby="modalKonfirmasiLabel<?= $id_order ?>" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <form action="proses_konfirmasi.php" method="POST">
+                      <input type="hidden" name="id_order" value="<?= $id_order ?>">
+                      <div class="modal-content">
+                        <div class="modal-header bg-success text-white">
+                          <h5 class="modal-title" id="modalKonfirmasiLabel<?= $id_order ?>">Konfirmasi Order #<?= 'ORD' . str_pad($id_order, 3, '0', STR_PAD_LEFT) ?></h5>
+                          <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="form-group">
+                            <label>Kurir Jemput</label>
+                            <select name="id_kurir_jemput" class="form-control" required>
+                              <option value="">-- Pilih Kurir Jemput --</option>
+                              <?= $kurir_options ?>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label>Kurir Antar</label>
+                            <select name="id_kurir_antar" class="form-control" required>
+                              <option value="">-- Pilih Kurir Antar --</option>
+                              <?= $kurir_options ?>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" name="konfirmasi" class="btn btn-primary">Konfirmasi</button>
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <div class="modal fade" id="modalTolakKonfirmasi<?= $id_order ?>" tabindex="-1" role="dialog" aria-labelledby="modalTolakLabel<?= $id_order ?>" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form action="proses_konfirmasi.php" method="POST">
+      <input type="hidden" name="id_order" value="<?= $id_order ?>">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="modalTolakLabel<?= $id_order ?>">Tolak Order #<?= 'ORD' . str_pad($id_order, 3, '0', STR_PAD_LEFT) ?></h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-    </div>
-</body>
+        <div class="modal-body">
+          <p>Yakin ingin menolak dan membatalkan order ini?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" name="tolak_order" class="btn btn-danger">Ya, Tolak</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php include 'footer.php'; ?>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="js/sb-admin-2.min.js"></script>
+</body>
 </html>

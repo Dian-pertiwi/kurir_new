@@ -57,11 +57,11 @@
             <span>Laporan</span></a>
     </li>
 
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="pengaturan.php">
             <i class="fas fa-cogs"></i>
-            <span>Pengaturan</span></a>
-    </li>
+            <span>Profil</span></a>
+    </li> -->
     <?php endif; ?>
 
     <li class="nav-item">

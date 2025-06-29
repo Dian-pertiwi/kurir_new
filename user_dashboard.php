@@ -204,7 +204,7 @@ $data_pengirim = mysqli_fetch_assoc($query);
     </div>
 
     <div style="text-align: center;">
-      <a href="ubah_profil.php" class="btn btn-primary">Ubah Profil</a>
+      <a href="ubah_profil.php" class="btn btn-primary">Lengkapi Data Profil</a>
     </div>
   </div>
 

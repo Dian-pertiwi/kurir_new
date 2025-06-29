@@ -83,12 +83,12 @@
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                             <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-  <?= $presentase_pending ?>%
-</div>
-<div class="progress-bar bg-info" role="progressbar"
-     style="width: <?= $presentase_pending ?>%" 
-     aria-valuenow="<?= $presentase_pending ?>" aria-valuemin="0" aria-valuemax="100">
-</div>
+                                                <?= $presentase_pending ?>%
+                                                </div>
+                                                <div class="progress-bar bg-info" role="progressbar"
+                                                    style="width: <?= $presentase_pending ?>%" 
+                                                    aria-valuenow="<?= $presentase_pending ?>" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-auto">

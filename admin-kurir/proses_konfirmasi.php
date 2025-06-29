@@ -28,4 +28,18 @@ if (isset($_POST['konfirmasi'])) {
 } else {
     header("Location: data_order.php");
 }
+
+if (isset($_POST['tolak_order'])) {
+    $id_order = (int) $_POST['id_order'];
+    $id_status = 6; // Gagal Dikirim
+
+    $update = mysqli_query($conn, "UPDATE tbl_pengiriman_paket SET id_status_order = $id_status WHERE id_pengiriman = $id_order");
+
+    if ($update) {
+        header("Location: detail_order.php?id=$id_order&status=ditolak");
+        exit;
+    } else {
+        echo "Gagal menolak order: " . mysqli_error($conn);
+    }
+}
 ?>

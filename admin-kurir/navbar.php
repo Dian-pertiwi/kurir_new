@@ -111,10 +111,10 @@ body.dark-mode {
   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
   Profil Saya (<?= htmlspecialchars($_SESSION['nama']) ?>)
 </a>
-                  <a class="dropdown-item" href="pengaturan.php">
+                  <!-- <a class="dropdown-item" href="pengaturan.php">
                       <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                       Pengaturan
-                  </a>
+                  </a> -->
                   <a class="dropdown-item" href="riwayat.php">
                       <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                       Riwayat Aktivitas

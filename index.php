@@ -1,6 +1,9 @@
+<?php 
+session_start(); 
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 
 <?php include 'head.php'; ?>
 
@@ -10,13 +13,16 @@
 <!-- Custom CSS Kamu -->
 <link rel="stylesheet" href="<?= $base_url ?>assets/css/style.css">
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+
 <body class="index-page">
 
 
     <header id="header" class="header d-flex align-items-center sticky-top">
         <div
             class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-            <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+            <a href="index.php" class="logo d-flex align-items-center me-auto me-xl-0">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
                 <!-- <img src="assets/img/logo.webp" alt=""> -->
                 <h1 class="sitename">Becat Kurir NTB</h1>
@@ -25,9 +31,9 @@
             <nav id="navmenu" class="navmenu">
                 <ul>
                     <li><a href="index.php" class="active">Home</a></li>
-                    <li><a href="#about">Tentang Perusahaan</a></li>
-                    <li><a href="#resume">Profil</a></li>
-                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#about">About us</a></li>
+                    <li><a href="#portfolio">Gallery</a></li>
+                    <li><a href="user_dashboard.php">Profil</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -67,7 +73,14 @@
                             dan layanan customer support yang responsif.
                         </p>
                         <div class="cta-buttons" data-aos="fade-up" data-aos-delay="300">
-                            <a href="order.php" class="btn btn-primary">Pesan Sekarang</a>
+                        <?php if (isset($_SESSION['id_user'])): ?>
+                             <a href="order.php" class="btn btn-primary">Pesan Sekarang</a>
+                        <?php else: ?>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalHarusLogin">
+                                Pesan Sekarang
+                            </button>
+                        <?php endif; ?>
+
                             <a href="cek_resi.php" class="btn btn-outline">Cek Resi</a>
                         </div>
                         <div class="hero-stats mt-4" data-aos="fade-up" data-aos-delay="400">
@@ -98,6 +111,24 @@
             </div>
         </section>
         <!-- /Hero Section -->
+
+        <!-- Modal Harus Login -->
+<div class="modal fade" id="modalHarusLogin" tabindex="-1" role="dialog" aria-labelledby="modalHarusLoginLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content text-center p-4">
+      <div class="modal-body">
+        <i class="fas fa-lock fa-3x text-warning mb-3"></i>
+        <h5 class="modal-title font-weight-bold mb-3" id="modalHarusLoginLabel">Akses Ditolak</h5>
+        <p class="text-muted">Silakan login atau daftar akun untuk memesan layanan kurir.</p>
+        <div class="d-flex justify-content-center mt-4">
+          <a href="user_login.php" class="btn btn-primary mr-2">Login</a>
+          <a href="daftar.php" class="btn btn-outline-secondary">Daftar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         <!-- About Section -->
         <section id="about" class="about section light-background">
@@ -705,7 +736,7 @@
                             Kami hadir dengan solusi logistik lokal yang menjangkau kota dan
                             desa di seluruh wilayah Nusa Tenggara Barat.
                         </p>
-                        <a href="#form-pengiriman" class="btn btn-outline-primary">Pesan Sekarang</a>
+                        <a href="order.php" class="btn btn-outline-primary">Pesan Sekarang</a>
                     </div>
                     <div class="col-lg-8">
                         <div class="row g-4">
@@ -771,9 +802,9 @@
         </section>
         <!-- /Services Section -->
 
-        <?php include 'order.php'; ?>
-
     </main>
+
+
 
 
     <?php include 'footer.php'; ?>
@@ -788,6 +819,10 @@
             class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/php-email-form/validate.js"></script>
     <script src="assets/vendor/aos/aos.js"></script>

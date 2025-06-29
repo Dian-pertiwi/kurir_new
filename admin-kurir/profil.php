@@ -16,6 +16,7 @@ $data = mysqli_fetch_assoc($query);
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
   <meta charset="UTF-8">
   <title>Profil Saya</title>
@@ -71,7 +72,10 @@ $data = mysqli_fetch_assoc($query);
                       <td><?= htmlspecialchars($data['role']) ?></td>
                     </tr>
                   </table>
-                  <a href="dashboard.php" class="btn btn-secondary btn-sm">Kembali</a>
+                  <div>
+                  <a href="dashboard.php" class="btn btn-primary btn-sm">Kembali</a>
+                  <a href="pengaturan.php" class="btn btn-success btn-sm">Ubah Data</a>
+                  </div>
                 </div>
               </div>
               <?php else: ?>

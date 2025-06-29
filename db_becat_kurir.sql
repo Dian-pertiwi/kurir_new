@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Waktu pembuatan: 29 Jun 2025 pada 03.44
+-- Waktu pembuatan: 29 Jun 2025 pada 15.26
 -- Versi server: 8.0.40
 -- Versi PHP: 8.3.14
 
@@ -61,7 +61,8 @@ CREATE TABLE `tbl_data_kurir` (
 --
 
 INSERT INTO `tbl_data_kurir` (`id_kurir`, `id_user`, `nama_kurir`, `no_hp`, `alamat_kurir`, `status`) VALUES
-(2, NULL, 'dayat', '087715882995', 'ddddd', 'aktif');
+(2, NULL, 'dayat', '087715882995', 'ddddd', 'aktif'),
+(3, NULL, 'sanip', '087715882995', 'praya', 'aktif');
 
 -- --------------------------------------------------------
 
@@ -189,7 +190,35 @@ INSERT INTO `tbl_log_aktivitas` (`id_log`, `id_user`, `aktivitas`, `waktu`) VALU
 (58, 1, 'Login ke sistem', '2025-06-28 19:38:47'),
 (59, 1, 'Login ke sistem', '2025-06-29 11:36:21'),
 (60, 5, 'Login ke sistem', '2025-06-29 11:37:44'),
-(61, 1, 'Login ke sistem', '2025-06-29 11:38:05');
+(61, 1, 'Login ke sistem', '2025-06-29 11:38:05'),
+(62, 6, 'Login ke sistem sebagai user', '2025-06-29 12:03:22'),
+(63, 11, 'Pendaftaran dan login pertama kali', '2025-06-29 12:56:56'),
+(64, 12, 'Pendaftaran dan login pertama kali', '2025-06-29 14:22:51'),
+(65, 12, 'Login ke sistem sebagai user', '2025-06-29 15:16:13'),
+(66, 12, 'Login ke sistem sebagai user', '2025-06-29 15:35:09'),
+(67, 12, 'Login ke sistem sebagai user', '2025-06-29 15:36:29'),
+(68, 12, 'Login ke sistem sebagai user', '2025-06-29 15:53:34'),
+(69, 1, 'Login ke sistem', '2025-06-29 16:10:15'),
+(70, 1, 'Login ke sistem sebagai user', '2025-06-29 16:18:06'),
+(71, 12, 'Login ke sistem sebagai user', '2025-06-29 16:18:34'),
+(72, 1, 'Login ke sistem', '2025-06-29 16:34:42'),
+(73, 13, 'Pendaftaran dan login pertama kali', '2025-06-29 17:19:53'),
+(74, 1, 'Login ke sistem', '2025-06-29 17:24:06'),
+(75, 1, 'Mengubah pengaturan akun', '2025-06-29 17:31:36'),
+(76, 1, 'Mengubah pengaturan akun', '2025-06-29 17:31:41'),
+(77, 1, 'Mengubah pengaturan akun', '2025-06-29 17:35:40'),
+(78, 1, 'Mengubah pengaturan akun', '2025-06-29 17:35:54'),
+(79, 1, 'Mengubah pengaturan akun', '2025-06-29 17:37:34'),
+(80, 1, 'Mengubah pengaturan akun', '2025-06-29 17:38:59'),
+(81, 1, 'Login ke sistem', '2025-06-29 17:39:58'),
+(82, 1, 'Mengubah pengaturan akun', '2025-06-29 17:40:10'),
+(83, 1, 'Login ke sistem', '2025-06-29 17:41:18'),
+(84, 1, 'Login ke sistem', '2025-06-29 20:59:22'),
+(85, 1, 'Login ke sistem', '2025-06-29 21:17:19'),
+(86, 1, 'Login ke sistem sebagai user', '2025-06-29 22:31:11'),
+(87, 6, 'Login ke sistem sebagai user', '2025-06-29 22:31:22'),
+(88, 1, 'Login ke sistem', '2025-06-29 22:33:20'),
+(89, 6, 'Login ke sistem sebagai user', '2025-06-29 23:15:38');
 
 -- --------------------------------------------------------
 
@@ -214,7 +243,14 @@ CREATE TABLE `tbl_penerima` (
 INSERT INTO `tbl_penerima` (`id_penerima`, `id_kab_tujuan`, `nama_penerima`, `kec_pengirim`, `alamat_penerima`, `hp_penerima`, `link_maps`) VALUES
 (1, 5201, 'Budi', 'Kediri', 'Jl. Gunung Sari No.2', '081234111111', 'https://maps.app/go1'),
 (2, 5203, 'Tini', 'Masbagik', 'Jl. Raya Masbagik', '081234222222', 'https://maps.app/go2'),
-(3, 5271, 'Joko', 'Cakranegara', 'Jl. Selaparang No.3', '081234333333', 'https://maps.app/go3');
+(3, 5271, 'Joko', 'Cakranegara', 'Jl. Selaparang No.3', '081234333333', 'https://maps.app/go3'),
+(4, 5201, 'pipitperak', 'GERUNG', 'Mataram NTB', '087715882995', 'https://hghh'),
+(5, 5201, 'pipitperak', 'LEMBAR', 'Mataram NTB', '087715882995', 'https://hghh'),
+(6, 5201, 'pipitperak', 'LEMBAR', 'Mataram NTB', '087715882995', 'https://hghh'),
+(7, 5201, 'pipitperak', 'GERUNG', 'Mataram NTB', '087715882995', 'https://hghh'),
+(8, 5201, 'pipitperak', 'GERUNG', 'Mataram NTB', '087715882995', 'https://hghh'),
+(9, 5201, 'dayat dev', 'KURIPAN', 'Praya Lombok Tengah', '087715882995', 'https://hghh'),
+(10, 5201, 'pipitperak', 'LEMBAR', 'Mataram NTB', '087715882995', 'https://hghh');
 
 -- --------------------------------------------------------
 
@@ -242,7 +278,11 @@ INSERT INTO `tbl_pengirim` (`id_pengirim`, `id_kab_asal`, `id_bank`, `id_user`, 
 (1, 5271, 1, 2, 'Dian Pertiwi', 'Ampenan ubah baru', 'Jl. Udayana No.10', '081234567890', '1234567890'),
 (2, 5201, 2, 2, 'Dian Pertiwi', 'Ampenan ubah', 'Jl. Udayana No.10', '081234567890', '1234567890'),
 (3, 5203, 3, 2, 'Dian Pertiwi', 'Ampenan ubah', 'Jl. Udayana No.10', '081234567890', '1234567890'),
-(4, NULL, NULL, 10, 'akun baru', 'akun baru', 'Praya Lombok Tengah', '087715882995', '1234567890');
+(4, NULL, NULL, 10, 'akun baru', 'akun baru', 'Praya Lombok Tengah', '087715882995', '1234567890'),
+(5, 5271, 2, 6, 'Dian Pertiwi', 'masbagek', 'Masbagek, Lotim', '087715882995', '1234567890'),
+(6, NULL, NULL, 11, 'dada', 'kec dada', 'Ubung Lombok Tengah Nusa Tenggara Barat', '087715882995', '1234567890'),
+(7, 5271, 1, 12, 'sabri', 'lombok timur', 'lombok timur', 'Praya', '019101085224809'),
+(8, 5201, 2, 13, 'Dian Pertiwi', 'pujut', 'pujut', '087715882995', '1234567890');
 
 -- --------------------------------------------------------
 
@@ -262,7 +302,7 @@ CREATE TABLE `tbl_pengiriman_paket` (
   `berat_barang` decimal(10,2) DEFAULT NULL,
   `harga_barang` decimal(10,2) DEFAULT NULL,
   `status_pembayaran` enum('belum bayar','sudah bayar') DEFAULT NULL,
-  `resi` varchar(50) DEFAULT NULL,
+  `resi` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `bukti_tf_admin` varchar(225) DEFAULT NULL,
   `waktu_konfirmasi` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -272,7 +312,7 @@ CREATE TABLE `tbl_pengiriman_paket` (
 --
 
 INSERT INTO `tbl_pengiriman_paket` (`id_pengiriman`, `id_tarif`, `id_pengirim`, `id_penerima`, `id_jenis_paket`, `id_status_order`, `id_kurir_jemput`, `id_kurir_antar`, `berat_barang`, `harga_barang`, `status_pembayaran`, `resi`, `bukti_tf_admin`, `waktu_konfirmasi`) VALUES
-(1, 1, 1, 1, 5, 2, 2, 2, 12.00, 12.00, 'belum bayar', 'RES-2025', 'tf.jpg', '2025-06-28 10:58:03');
+(4, 1, 5, 10, 1, 2, 2, 2, 12.00, 9000000.00, 'belum bayar', 'RESI686158CA39DBF', NULL, '2025-06-29 15:16:51');
 
 -- --------------------------------------------------------
 
@@ -320,7 +360,8 @@ INSERT INTO `tbl_tarif` (`id_tarif`, `id_kab_asal`, `id_kab_tujuan`, `tarif`) VA
 (1, 5271, 5201, 15000.00),
 (2, 5271, 5203, 20000.00),
 (3, 5201, 5203, 25000.00),
-(4, 5271, 5201, 30000.00);
+(4, 5271, 5201, 30000.00),
+(5, 5271, 5202, 90000.00);
 
 -- --------------------------------------------------------
 
@@ -341,7 +382,7 @@ CREATE TABLE `tbl_user` (
 --
 
 INSERT INTO `tbl_user` (`id_user`, `username`, `password`, `role`, `nama`) VALUES
-(1, 'admin01', '326ee55478c4a6c92cdb6d2a255a2e74', 'admin', 'dayat update'),
+(1, 'admin', '326ee55478c4a6c92cdb6d2a255a2e74', 'admin', 'dayat update'),
 (2, 'Dianpertiwi@123', '2d26b61eafa05991ceb1a8975604354a', 'user', 'Dian Pertiwi'),
 (3, 'kurir01', '1c51520de052c7f69ab4ce0ec9aabba6', 'kurir', 'Kurir Agus'),
 (4, 'kurirdedi', '711ccac10b1be72d703acdb209b1d892', 'kurir', 'Kurir Dedi'),
@@ -350,7 +391,10 @@ INSERT INTO `tbl_user` (`id_user`, `username`, `password`, `role`, `nama`) VALUE
 (7, 'tess', 'b93939873fd4923043b9dec975811f66', 'user', 'tess'),
 (8, 'tesdua', '25d55ad283aa400af464c76d713c07ad', 'user', 'tesduaubah'),
 (9, 'ajgaj', '633fc4326202a4e316067f16055a7c98', 'user', 'dayat'),
-(10, 'akun baru', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'akun baru');
+(10, 'akun baru', 'e10adc3949ba59abbe56e057f20f883e', 'user', 'akun baru'),
+(11, 'dada123', '25d55ad283aa400af464c76d713c07ad', 'user', 'dadadda'),
+(12, 'sabri', '25d55ad283aa400af464c76d713c07ad', 'user', 'Sabri'),
+(13, 'dina', 'f093c0fed979519fbc43d772b76f5c86', 'user', 'dina');
 
 --
 -- Indexes for dumped tables
@@ -451,7 +495,7 @@ ALTER TABLE `tbl_bank`
 -- AUTO_INCREMENT untuk tabel `tbl_data_kurir`
 --
 ALTER TABLE `tbl_data_kurir`
-  MODIFY `id_kurir` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_kurir` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `tbl_jenis_paket`
@@ -469,25 +513,25 @@ ALTER TABLE `tbl_kabupaten`
 -- AUTO_INCREMENT untuk tabel `tbl_log_aktivitas`
 --
 ALTER TABLE `tbl_log_aktivitas`
-  MODIFY `id_log` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id_log` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT untuk tabel `tbl_penerima`
 --
 ALTER TABLE `tbl_penerima`
-  MODIFY `id_penerima` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_penerima` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT untuk tabel `tbl_pengirim`
 --
 ALTER TABLE `tbl_pengirim`
-  MODIFY `id_pengirim` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_pengirim` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT untuk tabel `tbl_pengiriman_paket`
 --
 ALTER TABLE `tbl_pengiriman_paket`
-  MODIFY `id_pengiriman` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_pengiriman` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `tbl_status_order`
@@ -499,13 +543,13 @@ ALTER TABLE `tbl_status_order`
 -- AUTO_INCREMENT untuk tabel `tbl_tarif`
 --
 ALTER TABLE `tbl_tarif`
-  MODIFY `id_tarif` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_tarif` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `tbl_user`
 --
 ALTER TABLE `tbl_user`
-  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)

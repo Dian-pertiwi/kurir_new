@@ -18,6 +18,10 @@ $user = mysqli_fetch_assoc($result_user);
 // Ambil data pengirim jika sudah ada
 $result_pengirim = mysqli_query($conn, "SELECT * FROM tbl_pengirim WHERE id_user = $id_user LIMIT 1");
 $pengirim = mysqli_fetch_assoc($result_pengirim);
+
+$result_bank = mysqli_query($conn, "SELECT * FROM tbl_bank ORDER BY nama_bank ASC");
+$result_kabupaten = mysqli_query($conn, "SELECT * FROM tbl_kabupaten ORDER BY nama_kabupaten ASC");
+
 $id_pengirim = $pengirim['id_pengirim'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -30,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $alamat_pengirim  = trim(mysqli_real_escape_string($conn, $_POST['alamat_pengirim']));
     $hp_pengirim      = trim(mysqli_real_escape_string($conn, $_POST['hp_pengirim']));
     $no_rekening      = trim(mysqli_real_escape_string($conn, $_POST['no_rekening']));
+    $id_bank          = (int) $_POST['id_bank'];
+    $id_kab_asal      = (int) $_POST['id_kab_asal'];
 
     if ($nama === '' || $username === '') {
         $error = "Nama dan username wajib diisi.";
@@ -52,13 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     kec_pengirim='$kec_pengirim',
                     alamat_pengirim='$alamat_pengirim',
                     hp_pengirim='$hp_pengirim',
-                    no_rekening='$no_rekening'
+                    no_rekening='$no_rekening',
+                    id_bank = $id_bank,
+                    id_kab_asal = $id_kab_asal
                 WHERE id_pengirim = $id_pengirim
             ";
         } else {
             $query_pengirim = "
-                INSERT INTO tbl_pengirim (id_user, nama_pengirim, kec_pengirim, alamat_pengirim, hp_pengirim, no_rekening)
-                VALUES ($id_user, '$nama_pengirim', '$kec_pengirim', '$alamat_pengirim', '$hp_pengirim', '$no_rekening')
+                INSERT INTO tbl_pengirim (id_user, nama_pengirim, kec_pengirim, alamat_pengirim, hp_pengirim, no_rekening, id_bank, id_kab_asal)
+                VALUES ($id_user, '$nama_pengirim', '$kec_pengirim', '$alamat_pengirim', '$hp_pengirim', '$no_rekening', $id_bank, $id_kab_asal)
             ";
         }
 
@@ -112,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       color: #ff6f0f;
     }
 
-    input[type="text"], input[type="password"] {
+    input, select {
       padding: 12px;
       width: 100%;
       margin-bottom: 1rem;
@@ -176,10 +184,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <hr>
       <h4>Data Pengirim</h4>
+      <label for="nama_pengirim">Nama Pengirim</label>
       <input type="text" name="nama_pengirim" value="<?= htmlspecialchars($pengirim['nama_pengirim'] ?? '') ?>" placeholder="Nama Pengirim" required>
+      <label for="kec_pengirim">Kecamatan Pengirim</label>
       <input type="text" name="kec_pengirim" value="<?= htmlspecialchars($pengirim['kec_pengirim'] ?? '') ?>" placeholder="Kecamatan Pengirim" required>
+      <label for="alamat_pengirim">Alamat Pengirim</label>
       <input type="text" name="alamat_pengirim" value="<?= htmlspecialchars($pengirim['alamat_pengirim'] ?? '') ?>" placeholder="Alamat Lengkap" required>
+      <label for="hp_pengirim">No. HP Pengirim</label>
       <input type="text" name="hp_pengirim" value="<?= htmlspecialchars($pengirim['hp_pengirim'] ?? '') ?>" placeholder="No. HP Pengirim" required>
+
+      <label for="id_bank">Bank Pengirim</label>
+      <select name="id_bank" required>
+        <option value="">Pilih Bank</option>
+        <?php while ($bank = mysqli_fetch_assoc($result_bank)) : ?>
+          <option value="<?= $bank['id_bank'] ?>" <?= ($pengirim['id_bank'] ?? '') == $bank['id_bank'] ? 'selected' : '' ?>>
+            <?= $bank['nama_bank'] ?>
+          </option>
+        <?php endwhile; ?>
+      </select>
+
+      <label for="id_kab_asal">Kabupaten Asal Pengirim</label>
+      <select name="id_kab_asal" required>
+        <option value="">Pilih Kabupaten</option>
+        <?php while ($kab = mysqli_fetch_assoc($result_kabupaten)) : ?>
+          <option value="<?= $kab['id_kab'] ?>" <?= ($pengirim['id_kab_asal'] ?? '') == $kab['id_kab'] ? 'selected' : '' ?>>
+            <?= $kab['nama_kabupaten'] ?>
+          </option>
+        <?php endwhile; ?>
+      </select>
+      <label for="no_rekening">No. Rekening Pengirim</label>
       <input type="text" name="no_rekening" value="<?= htmlspecialchars($pengirim['no_rekening'] ?? '') ?>" placeholder="No. Rekening" required>
 
       <button type="submit">Simpan Perubahan</button>

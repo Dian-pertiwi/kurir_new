@@ -25,7 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (mysqli_num_rows($query) > 0) {
         $data = mysqli_fetch_assoc($query);
 
-        $waktu_kirim = date('d M Y, H:i', strtotime($data['waktu_konfirmasi']));
+        // $waktu_kirim = date('d M Y, H:i', strtotime($data['waktu_konfirmasi']));
+        $waktu_kirim = $data['waktu_konfirmasi']
+    ? date('d M Y, H:i', strtotime($data['waktu_konfirmasi']))
+    : '-';
+    
         $alamatLengkap = $data['alamat_penerima'];
 
         echo json_encode([
